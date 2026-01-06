@@ -3,14 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Tools</title>
+    <title>Araçlar Paneli</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #111; color: #0f0; padding: 20px; }
+        :root { --bg: #0d1117; --text: #00ff41; --accent: #21262d; }
+        body { margin:0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+        nav { width: 250px; background: #161b22; padding: 20px; border-right: 1px solid #30363d; }
+        nav h2 { margin: 0 0 30px; text-align: center; }
+        nav ul { list-style: none; padding: 0; }
+        nav li { padding: 12px; cursor: pointer; border-radius: 6px; margin-bottom: 8px; }
+        nav li:hover, nav li.active { background: var(--accent); }
+        main { flex: 1; padding: 30px; }
+        .card { background: var(--accent); padding: 20px; border-radius: 8px; margin-bottom: 20px; }
         h1 { text-align: center; }
     </style>
 </head>
 <body>
-    <h1>Hoş geldin! Araçlar paneli yakında burada olacak.</h1>
-    <p>Şu an test aşamasındayız...</p>
+    <nav>
+        <h2>Araçlar</h2>
+        <ul>
+            <li class="active" onclick="showSection('home')">Ana Sayfa</li>
+            <li onclick="showSection('ping')">Site Ping İzleyici</li>
+            <li onclick="showSection('borsa')">Borsa Takip</li>
+            <li onclick="showSection('hava')">Hava Durumu</li>
+            <li onclick="showSection('diger')">Diğer Araçlar</li>
+        </ul>
+    </nav>
+    <main>
+        <h1 id="title">Hoş Geldin!</h1>
+        <div id="content" class="card">
+            <p>Burası senin kişisel araç panelin. Soldaki menüden istediğin aracı seç.</p>
+        </div>
+    </main>
+
+    <script>
+        function showSection(sec) {
+            document.querySelectorAll('nav li').forEach(li => li.classList.remove('active'));
+            event.target.classList.add('active');
+            const title = document.getElementById('title');
+            const content = document.getElementById('content');
+            if (sec === 'home') {
+                title.textContent = 'Hoş Geldin!';
+                content.innerHTML = '<p>Burası senin kişisel araç panelin. Soldaki menüden istediğin aracı seç.</p>';
+            } else if (sec === 'ping') {
+                title.textContent = 'Site Ping İzleyici';
+                content.innerHTML = '<p>Yakında 100 siteye ping sonuçları burada görünecek...</p>';
+            } else if (sec === 'borsa') {
+                title.textContent = 'Borsa Takip';
+                content.innerHTML = '<p>Anlık borsa verileri yakında burada...</p>';
+            } else if (sec === 'hava') {
+                title.textContent = 'Hava Durumu';
+                content.innerHTML = '<p>Seçtiğin şehirlerin hava durumu yakında burada...</p>';
+            } else {
+                title.textContent = 'Diğer Araçlar';
+                content.innerHTML = '<p>QR kod, şifre üretici vs. eklenecek...</p>';
+            }
+        }
+    </script>
 </body>
 </html>
