@@ -149,7 +149,35 @@
             inset: auto 20px 16px auto;
         }
 
-        /* Borsa Bölümü */
+        /* Borsa Bölümü - Ticker En Üstte */
+        .ticker-wrapper {
+            background: #000;
+            overflow: hidden;
+            padding: 12px 0;
+            margin: 0 0 40px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+        }
+        .ticker {
+            display: flex;
+            white-space: nowrap;
+            animation: scroll 80s linear infinite;
+        }
+        .ticker-item {
+            margin: 0 50px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .ticker-symbol { color: var(--text); margin-right: 16px; }
+        .ticker-price { color: var(--text); margin-right: 16px; }
+        .ticker-change.up { color: var(--up); }
+        .ticker-change.down { color: var(--down); }
+
+        @keyframes scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
         .borsa-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -196,63 +224,12 @@
         }
         .chart-title { font-size: 1.4em; text-align: center; margin-bottom: 20px; color: var(--text); }
 
-        /* Ticker Tabela - En Üstte */
-        .ticker-wrapper {
-            background: #000;
-            overflow: hidden;
-            padding: 12px 0;
-            margin-top: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
-        }
-        .ticker {
-            display: flex;
-            white-space: nowrap;
-            animation: scroll 80s linear infinite;
-        }
-        .ticker-item {
-            margin: 0 50px;
-            font-family: 'Courier New', monospace;
-            font-size: 1.5em;
-            font-weight: bold;
-        }
-        .ticker-symbol { color: var(--text); margin-right: 16px; }
-        .ticker-price { color: var(--text); margin-right: 16px; }
-        .ticker-change.up { color: var(--up); }
-        .ticker-change.down { color: var(--down); }
-
-        @keyframes scroll {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
-
         .update {
             text-align: center;
             margin-top: 60px;
             color: var(--secondary);
             font-size: 1.1em;
         }
-
-        /* Hava Durumu */
-        .weather-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 24px;
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-        .weather-card {
-            background: #181818;
-            border-radius: 18px;
-            padding: 24px;
-            text-align: center;
-            box-shadow: var(--shadow);
-            transition: 0.4s;
-        }
-        .weather-card:hover { transform: translateY(-8px); }
-        .weather-city { font-size: 1.4em; font-weight: 600; margin-bottom: 12px; }
-        .weather-temp { font-size: 2.5em; font-weight: 700; margin: 16px 0; }
-        .weather-condition { font-size: 1.2em; color: var(--secondary); margin-bottom: 8px; }
-        .weather-icon { font-size: 4em; color: #00ff41; margin: 16px 0; }
     </style>
 </head>
 <body>
@@ -336,51 +313,7 @@
                 { x: '2026-01-06', o: 10800, h: 10850, l: 10790, c: 10845 },
                 { x: '2026-01-07', o: 10845, h: 10870, l: 10820, c: 10845 }
             ],
-            THYAO: [
-                { x: '2026-01-01', o: 292, h: 296, l: 291, c: 295 },
-                { x: '2026-01-02', o: 295, h: 297, l: 294, c: 293 },
-                { x: '2026-01-03', o: 293, h: 296, l: 292, c: 295.5 },
-                { x: '2026-01-04', o: 295.5, h: 296, l: 294, c: 295 },
-                { x: '2026-01-05', o: 295, h: 296, l: 294, c: 295 },
-                { x: '2026-01-06', o: 295, h: 296, l: 294, c: 295 },
-                { x: '2026-01-07', o: 295, h: 296, l: 294, c: 295 }
-            ],
-            GARAN: [
-                { x: '2026-01-01', o: 110, h: 112, l: 109, c: 112 },
-                { x: '2026-01-02', o: 112, h: 113, l: 111, c: 112.4 },
-                { x: '2026-01-03', o: 112.4, h: 113, l: 112, c: 112 },
-                { x: '2026-01-04', o: 112, h: 112.5, l: 111.5, c: 112 },
-                { x: '2026-01-05', o: 112, h: 112.5, l: 111.5, c: 112 },
-                { x: '2026-01-06', o: 112, h: 112.5, l: 111.5, c: 112 },
-                { x: '2026-01-07', o: 112, h: 112.5, l: 111.5, c: 112 }
-            ],
-            AKBNK: [
-                { x: '2026-01-01', o: 67, h: 68.5, l: 66.5, c: 68 },
-                { x: '2026-01-02', o: 68, h: 68.5, l: 67.5, c: 68.2 },
-                { x: '2026-01-03', o: 68.2, h: 68.5, l: 68, c: 68 },
-                { x: '2026-01-04', o: 68, h: 68.5, l: 67.8, c: 68 },
-                { x: '2026-01-05', o: 68, h: 68.5, l: 67.8, c: 68 },
-                { x: '2026-01-06', o: 68, h: 68.5, l: 67.8, c: 68 },
-                { x: '2026-01-07', o: 68, h: 68.5, l: 67.8, c: 68 }
-            ],
-            EREGL: [
-                { x: '2026-01-01', o: 47, h: 49, l: 46.5, c: 48.9 },
-                { x: '2026-01-02', o: 48.9, h: 49.5, l: 48.5, c: 49 },
-                { x: '2026-01-03', o: 49, h: 49.5, l: 48.5, c: 49 },
-                { x: '2026-01-04', o: 49, h: 49.5, l: 48.5, c: 49 },
-                { x: '2026-01-05', o: 49, h: 49.5, l: 48.5, c: 49 },
-                { x: '2026-01-06', o: 49, h: 49.5, l: 48.5, c: 49 },
-                { x: '2026-01-07', o: 49, h: 49.5, l: 48.5, c: 49 }
-            ],
-            SISE: [
-                { x: '2026-01-01', o: 47.5, h: 48.5, l: 47, c: 48.15 },
-                { x: '2026-01-02', o: 48.15, h: 48.5, l: 48, c: 48 },
-                { x: '2026-01-03', o: 48, h: 48.5, l: 47.8, c: 48 },
-                { x: '2026-01-04', o: 48, h: 48.5, l: 47.8, c: 48 },
-                { x: '2026-01-05', o: 48, h: 48.5, l: 47.8, c: 48 },
-                { x: '2026-01-06', o: 48, h: 48.5, l: 47.8, c: 48 },
-                { x: '2026-01-07', o: 48, h: 48.5, l: 47.8, c: 48 }
-            ]
+            // Diğer hisseler için veri eklenebilir
         };
 
         document.querySelectorAll('nav li').forEach(li => {
@@ -452,7 +385,6 @@
                 if (document.querySelector('nav li.active')?.dataset.sec === 'borsa') {
                     renderBorsaCards();
                     startTicker();
-                    renderCandleChart('bist100');
                 }
                 updateTime();
             } catch (e) {
@@ -586,34 +518,6 @@
                 ticker.appendChild(span);
                 ticker.appendChild(span.cloneNode(true));
             });
-        }
-
-        function renderHava() {
-            const grid = document.getElementById('content').querySelector('#hava-grid') || document.createElement('div');
-            grid.className = 'weather-grid';
-            grid.innerHTML = '';
-
-            const cities = [
-                { city: "Mersin", temp: "18°C", condition: "Güneşli", icon: "fas fa-sun" },
-                { city: "Niğde", temp: "5°C", condition: "Karlı", icon: "fas fa-snowflake" },
-                { city: "Bodrum", temp: "20°C", condition: "Rüzgarlı", icon: "fas fa-wind" }
-            ];
-
-            cities.forEach(city => {
-                const card = document.createElement('div');
-                card.className = 'weather-card';
-                card.innerHTML = `
-                    <div class="weather-city">${city.city}</div>
-                    <i class="${city.icon} weather-icon"></i>
-                    <div class="weather-temp">${city.temp}</div>
-                    <div class="weather-condition">${city.condition}</div>
-                `;
-                grid.appendChild(card);
-            });
-
-            if (!document.getElementById('hava-grid')) {
-                document.getElementById('content').appendChild(grid);
-            }
         }
 
         function initSearch() {
