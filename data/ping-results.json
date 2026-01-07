@@ -1,76 +1,377 @@
-{
-  "lastUpdate": "2026-01-07T00:05:20.550Z",
-  "totalSites": 10,
-  "data": [
-    {
-      "site": "google.com",
-      "latency": 335,
-      "status": 204,
-      "online": true,
-      "timestamp": "2026-01-07T00:05:18.810Z"
-    },
-    {
-      "site": "youtube.com",
-      "latency": 187,
-      "status": 200,
-      "online": true,
-      "timestamp": "2026-01-07T00:05:18.997Z"
-    },
-    {
-      "site": "github.com",
-      "latency": 16,
-      "status": 200,
-      "online": true,
-      "timestamp": "2026-01-07T00:05:19.013Z"
-    },
-    {
-      "site": "cloudflare.com",
-      "latency": 209,
-      "status": 200,
-      "online": true,
-      "timestamp": "2026-01-07T00:05:19.222Z"
-    },
-    {
-      "site": "twitter.com",
-      "latency": 144,
-      "status": 403,
-      "online": true,
-      "timestamp": "2026-01-07T00:05:19.366Z"
-    },
-    {
-      "site": "instagram.com",
-      "latency": 320,
-      "status": 200,
-      "online": true,
-      "timestamp": "2026-01-07T00:05:19.686Z"
-    },
-    {
-      "site": "wikipedia.org",
-      "latency": 50,
-      "status": 403,
-      "online": true,
-      "timestamp": "2026-01-07T00:05:19.736Z"
-    },
-    {
-      "site": "amazon.com",
-      "latency": 673,
-      "status": 200,
-      "online": true,
-      "timestamp": "2026-01-07T00:05:20.409Z"
-    },
-    {
-      "site": "reddit.com",
-      "latency": 17,
-      "status": 403,
-      "online": true,
-      "timestamp": "2026-01-07T00:05:20.426Z"
-    },
-    {
-      "site": "netflix.com",
-      "latency": 124,
-      "status": 405,
-      "online": true,
-      "timestamp": "2026-01-07T00:05:20.550Z"
-    }
-  ]
-}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rulo-Archive</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --card-bg: #111111;
+            --text: #e0e0e0;
+            --text-secondary: #aaaaaa;
+            --border: #333333;
+            --accent: #1a1a1a;
+            --online: #00ff41;
+            --offline: #ff4444;
+        }
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            position: relative;
+        }
+        #matrix-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.2;
+        }
+
+        #menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--card-bg);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            transition: all 0.3s;
+        }
+        #menu-toggle:hover { transform: scale(1.1); background: var(--accent); }
+        #menu-toggle i { font-size: 1.6em; color: var(--text); }
+
+        nav {
+            position: fixed;
+            left: -260px;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: #0e0e0e;
+            padding: 80px 20px 20px;
+            border-right: 1px solid var(--border);
+            transition: left 0.4s ease;
+            z-index: 999;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+        }
+        nav.open { left: 0; }
+        nav h2 { margin: 0 0 40px; text-align: center; font-size: 1.5em; color: var(--text); }
+        nav ul { list-style: none; padding: 0; }
+        nav li {
+            padding: 16px 20px;
+            cursor: pointer;
+            border-radius: 14px;
+            margin-bottom: 12px;
+            transition: all 0.3s;
+            font-size: 1.1em;
+            background: var(--accent);
+            box-shadow: inset 0 3px 10px rgba(0,0,0,0.5), 0 6px 15px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+        }
+        nav li i { margin-right: 14px; font-size: 1.2em; width: 28px; text-align: center; }
+        nav li:hover, nav li.active {
+            background: #222;
+            transform: translateY(-3px);
+            box-shadow: inset 0 5px 15px rgba(0,0,0,0.7), 0 10px 25px rgba(0,0,0,0.6);
+        }
+
+        main { padding: 100px 40px 40px; min-height: 100vh; }
+        h1 { font-size: 2.2em; text-align: center; margin-bottom: 50px; color: var(--text); }
+
+        #search-container {
+            max-width: 800px;
+            margin: 0 auto 50px;
+        }
+        #search-input {
+            width: 100%;
+            padding: 20px 28px;
+            font-size: 1.3em;
+            border-radius: 20px;
+            border: none;
+            background: var(--card-bg);
+            color: var(--text);
+            box-shadow: inset 0 5px 15px rgba(0,0,0,0.7), 0 10px 30px rgba(0,0,0,0.5);
+            outline: none;
+            transition: all 0.3s;
+        }
+        #search-input:focus {
+            box-shadow: inset 0 5px 20px rgba(0,0,0,0.8), 0 0 0 5px rgba(0,255,65,0.3);
+            transform: scale(1.02);
+        }
+
+        #ping-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 28px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .site-card {
+            background: #181818;
+            border-radius: 22px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+        }
+        .site-card:hover {
+            transform: translateY(-12px) scale(1.05);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+        }
+        .site-favicon {
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            margin-right: 24px;
+            flex-shrink: 0;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+        }
+        .status-indicator {
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--offline);
+            border: 4px solid #000;
+            box-shadow: 0 0 15px rgba(255,68,68,0.6);
+        }
+        .site-card.online .status-indicator {
+            background: var(--online);
+            box-shadow: 0 0 20px rgba(0,255,65,0.8);
+        }
+        .site-info { flex: 1; }
+        .site-name {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .site-ping {
+            font-size: 2em;
+            font-weight: 800;
+            color: var(--text-secondary);
+            position: absolute;
+            bottom: 24px;
+            right: 28px;
+        }
+        .last-update {
+            text-align: center;
+            margin-top: 60px;
+            color: var(--text-secondary);
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix-bg"></canvas>
+
+    <div id="menu-toggle" onclick="toggleMenu()">
+        <i class="fas fa-bars"></i>
+    </div>
+
+    <nav id="sidebar">
+        <h2>Rulo-Archive</h2>
+        <ul>
+            <li class="active" data-section="home"><i class="fas fa-home"></i> Ana Sayfa</li>
+            <li data-section="ping"><i class="fas fa-globe"></i> Tüm Siteler</li>
+            <li data-section="borsa"><i class="fas fa-chart-line"></i> Borsa Takip</li>
+            <li data-section="hava"><i class="fas fa-cloud-sun"></i> Hava Durumu</li>
+            <li data-section="diger"><i class="fas fa-tools"></i> Diğer Araçlar</li>
+        </ul>
+    </nav>
+
+    <main>
+        <h1 id="title">Rulo-Archive</h1>
+        <div id="content">
+            <div id="search-container">
+                <input type="text" id="search-input" placeholder="Site veya etiket ara...">
+            </div>
+            <div id="ping-grid"></div>
+        </div>
+        <div id="last-update" class="last-update"></div>
+    </main>
+
+    <script>
+        // Matrix Yağmuru (aynı kaldı)
+        const canvas = document.getElementById('matrix-bg');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
+        const matrixArray = matrix.split("");
+
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function draw() {
+            ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00ff41';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = matrixArray[Math.floor(Math.random() * matrixArray.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975)
+                    drops[i] = 0;
+
+                drops[i]++;
+            }
+        }
+        setInterval(draw, 35);
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        const JSON_URL = "https://raw.githubusercontent.com/rulokat/my-tools-dashboard/main/data/ping-results.json";
+        let allData = [];
+        let lastUpdateTime = null;
+
+        // Menü tıklama
+        document.querySelectorAll('nav li').forEach(li => {
+            li.addEventListener('click', () => {
+                document.querySelectorAll('nav li').forEach(item => item.classList.remove('active'));
+                li.classList.add('active');
+
+                const sec = li.getAttribute('data-section');
+                const title = document.getElementById('title');
+
+                if (sec === 'home') {
+                    title.textContent = 'Rulo-Archive';
+                    document.getElementById('content').innerHTML = `
+                        <div id="search-container">
+                            <input type="text" id="search-input" placeholder="Site veya etiket ara...">
+                        </div>
+                        <div id="ping-grid"></div>
+                    `;
+                    setupSearch();
+                    renderSites([]);
+                } else if (sec === 'ping') {
+                    title.textContent = 'Tüm Siteler';
+                    document.getElementById('content').innerHTML = `<div id="ping-grid"></div>`;
+                    renderSites(allData);
+                    updateLastUpdateText();
+                } else {
+                    title.textContent = li.textContent.trim();
+                    document.getElementById('content').innerHTML = '<p style="text-align:center; color:#888; font-size:1.3em; margin-top:100px;">Bu bölüm yakında eklenecek...</p>';
+                    document.getElementById('last-update').textContent = '';
+                }
+            });
+        });
+
+        async function loadPingData() {
+            try {
+                const response = await fetch(JSON_URL + "?t=" + Date.now());
+                const data = await response.json();
+                lastUpdateTime = new Date(data.lastUpdate);
+                allData = data.data.map(item => ({
+                    site: item.site,
+                    latency: item.latency,
+                    online: item.online,
+                    cleanName: item.site
+                        .replace(/^www\./, '')
+                        .replace(/\.(com|org|net|io|co|edu|gov|tv|me|app)$/, '')
+                        .split('.')
+                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                        .join(' '),
+                    tags: item.tags || [] // Worker'dan tags varsa
+                }));
+
+                // Ana sayfadaysak boş göster
+                if (document.querySelector('nav li.active').getAttribute('data-section') === 'home') {
+                    renderSites([]);
+                } else if (document.querySelector('nav li.active').getAttribute('data-section') === 'ping') {
+                    renderSites(allData);
+                }
+                updateLastUpdateText();
+            } catch (error) {
+                console.error("Veri yüklenemedi:", error);
+            }
+        }
+
+        function updateLastUpdateText() {
+            if (!lastUpdateTime) return;
+            const now = new Date();
+            const diff = Math.floor((now - lastUpdateTime) / 60000);
+            document.getElementById('last-update').textContent = 
+                `Son güncelleme: ${diff === 0 ? 'az önce' : diff + ' dakika önce'}`;
+        }
+
+        function renderSites(sites) {
+            const grid = document.getElementById('ping-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            sites.forEach(item => {
+                const card = document.createElement('div');
+                card.className = `site-card ${item.online ? 'online' : 'offline'}`;
+                card.onclick = () => window.open('https://' + item.site, '_blank');
+
+                const favicon = `https://www.google.com/s2/favicons?domain=${item.site}&sz=128`;
+                const pingText = item.latency >= 0 ? `${item.latency} ms` : 'Timeout';
+
+                card.innerHTML = `
+                    <div class="status-indicator"></div>
+                    <img src="${favicon}" alt="${item.site}" class="site-favicon">
+                    <div class="site-info">
+                        <div class="site-name">${item.cleanName}</div>
+                    </div>
+                    <div class="site-ping">${pingText}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function setupSearch() {
+            const input = document.getElementById('search-input');
+            if (!input) return;
+
+            input.addEventListener('input', () => {
+                const query = input.value.toLowerCase().trim();
+                if (!query) {
+                    renderSites([]);
+                    return;
+                }
+
+                const filtered = allData.filter(item =>
+                    item.site.toLowerCase().includes(query) ||
+                    item.cleanName.toLowerCase().includes(query) ||
+                    item.tags.some(tag => tag.toLowerCase().includes(query))
+                );
+
+                renderSites(filtered);
+            });
+        }
+
+        loadPingData();
+        setInterval(loadPingData, 30000);
+        document.addEventListener('DOMContentLoaded', setupSearch);
+    </script>
+</body>
+</html>
