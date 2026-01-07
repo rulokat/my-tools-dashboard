@@ -1,1 +1,158 @@
-
+{
+  "lastUpdate": "2026-01-07T19:41:51.313Z",
+  "ping": {
+    "totalSites": 10,
+    "data": [
+      {
+        "site": "google.com",
+        "tags": [
+          "search",
+          "engine",
+          "tech",
+          "google",
+          "information"
+        ],
+        "latency": 2,
+        "status": 403,
+        "online": true,
+        "timestamp": "2026-01-07T19:41:50.931Z"
+      },
+      {
+        "site": "youtube.com",
+        "tags": [
+          "video",
+          "streaming",
+          "entertainment",
+          "google",
+          "music"
+        ],
+        "latency": 2,
+        "status": 403,
+        "online": true,
+        "timestamp": "2026-01-07T19:41:50.933Z"
+      },
+      {
+        "site": "github.com",
+        "tags": [
+          "code",
+          "repository",
+          "development",
+          "open-source",
+          "programming"
+        ],
+        "latency": 2,
+        "status": 403,
+        "online": true,
+        "timestamp": "2026-01-07T19:41:50.935Z"
+      },
+      {
+        "site": "cloudflare.com",
+        "tags": [
+          "cdn",
+          "security",
+          "web",
+          "hosting",
+          "dns"
+        ],
+        "latency": 1,
+        "status": 403,
+        "online": true,
+        "timestamp": "2026-01-07T19:41:50.936Z"
+      },
+      {
+        "site": "twitter.com",
+        "tags": [
+          "social",
+          "media",
+          "news",
+          "microblogging",
+          "x"
+        ],
+        "latency": 2,
+        "status": 403,
+        "online": true,
+        "timestamp": "2026-01-07T19:41:50.938Z"
+      },
+      {
+        "site": "instagram.com",
+        "tags": [
+          "social",
+          "photo",
+          "video",
+          "meta",
+          "sharing"
+        ],
+        "latency": 1,
+        "status": 403,
+        "online": true,
+        "timestamp": "2026-01-07T19:41:50.939Z"
+      },
+      {
+        "site": "wikipedia.org",
+        "tags": [
+          "encyclopedia",
+          "knowledge",
+          "free",
+          "education",
+          "wiki"
+        ],
+        "latency": 2,
+        "status": 403,
+        "online": true,
+        "timestamp": "2026-01-07T19:41:50.941Z"
+      },
+      {
+        "site": "amazon.com",
+        "tags": [
+          "shopping",
+          "ecommerce",
+          "retail",
+          "cloud",
+          "aws"
+        ],
+        "latency": 1,
+        "status": 403,
+        "online": true,
+        "timestamp": "2026-01-07T19:41:50.942Z"
+      },
+      {
+        "site": "reddit.com",
+        "tags": [
+          "forum",
+          "community",
+          "news",
+          "discussion",
+          "social"
+        ],
+        "latency": 2,
+        "status": 403,
+        "online": true,
+        "timestamp": "2026-01-07T19:41:50.944Z"
+      },
+      {
+        "site": "netflix.com",
+        "tags": [
+          "streaming",
+          "movies",
+          "tv",
+          "entertainment",
+          "video"
+        ],
+        "latency": 1,
+        "status": 403,
+        "online": true,
+        "timestamp": "2026-01-07T19:41:50.945Z"
+      }
+    ]
+  },
+  "borsa": {
+    "usd": "Yükleniyor...",
+    "eur": "Yükleniyor...",
+    "gold": "Yükleniyor...",
+    "bist100": {
+      "value": "Yükleniyor...",
+      "change": 0
+    },
+    "stocks": {}
+  }
+}
