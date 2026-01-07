@@ -1,0 +1,76 @@
+{
+  "lastUpdate": "2026-01-07T00:05:15.516Z",
+  "totalSites": 10,
+  "data": [
+    {
+      "site": "google.com",
+      "latency": 501,
+      "status": 204,
+      "online": true,
+      "timestamp": "2026-01-07T00:05:13.684Z"
+    },
+    {
+      "site": "youtube.com",
+      "latency": 406,
+      "status": 200,
+      "online": true,
+      "timestamp": "2026-01-07T00:05:14.090Z"
+    },
+    {
+      "site": "github.com",
+      "latency": 48,
+      "status": 200,
+      "online": true,
+      "timestamp": "2026-01-07T00:05:14.138Z"
+    },
+    {
+      "site": "cloudflare.com",
+      "latency": 310,
+      "status": 200,
+      "online": true,
+      "timestamp": "2026-01-07T00:05:14.448Z"
+    },
+    {
+      "site": "twitter.com",
+      "latency": 47,
+      "status": 403,
+      "online": true,
+      "timestamp": "2026-01-07T00:05:14.495Z"
+    },
+    {
+      "site": "instagram.com",
+      "latency": 179,
+      "status": 200,
+      "online": true,
+      "timestamp": "2026-01-07T00:05:14.674Z"
+    },
+    {
+      "site": "wikipedia.org",
+      "latency": 147,
+      "status": 403,
+      "online": true,
+      "timestamp": "2026-01-07T00:05:14.821Z"
+    },
+    {
+      "site": "amazon.com",
+      "latency": 404,
+      "status": 200,
+      "online": true,
+      "timestamp": "2026-01-07T00:05:15.225Z"
+    },
+    {
+      "site": "reddit.com",
+      "latency": 216,
+      "status": 403,
+      "online": true,
+      "timestamp": "2026-01-07T00:05:15.441Z"
+    },
+    {
+      "site": "netflix.com",
+      "latency": 75,
+      "status": 405,
+      "online": true,
+      "timestamp": "2026-01-07T00:05:15.516Z"
+    }
+  ]
+}
