@@ -44,6 +44,7 @@
             transition: 0.3s;
         }
         #menu-btn:hover { transform: scale(1.08); background: var(--accent); }
+        #menu-btn i { font-size: 1.6em; color: var(--text); }
 
         nav {
             position: fixed;
@@ -113,20 +114,21 @@
         .card {
             background: #181818;
             border-radius: 18px;
-            padding: 16px; /* küçültüldü */
+            padding: 16px;
             display: flex;
             align-items: center;
             cursor: pointer;
             transition: 0.4s;
             border: 1px solid var(--border);
             box-shadow: var(--shadow);
+            position: relative;
         }
         .card:hover {
-            transform: translateY(-8px) scale(1.03); /* hover efekti hafifletildi */
+            transform: translateY(-8px) scale(1.03);
             box-shadow: 0 20px 40px rgba(0,0,0,0.7);
         }
         .favicon {
-            width: 40px; /* küçültüldü */
+            width: 40px;
             height: 40px;
             border-radius: 12px;
             margin-right: 16px;
@@ -139,13 +141,20 @@
             height: 12px;
             border-radius: 50%;
             border: 3px solid #000;
+            background: var(--offline);
         }
-        .online .status { background: var(--online); box-shadow: 0 0 12px rgba(0,255,65,0.6); }
-        .offline .status { background: var(--offline); box-shadow: 0 0 10px rgba(255,68,68,0.5); }
+        .online .status {
+            background: var(--online);
+            box-shadow: 0 0 12px rgba(0,255,65,0.6);
+        }
+        .offline .status {
+            background: var(--offline);
+            box-shadow: 0 0 10px rgba(255,68,68,0.5);
+        }
         .info { flex: 1; }
-        .name { font-size: 1.1em; font-weight: 600; } /* küçültüldü */
+        .name { font-size: 1.1em; font-weight: 600; }
         .ping {
-            font-size: 1.3em; /* küçültüldü */
+            font-size: 1.3em;
             font-weight: 700;
             color: var(--secondary);
             position: absolute;
@@ -189,13 +198,13 @@
     </main>
 
     <script>
-        // Mandarin (Çince) karakterlerle Matrix yağmuru
+        // Mandarin + Rusça (Kiril) karışık Matrix yağmuru
         const c = document.getElementById('matrix');
         const ctx = c.getContext('2d');
         c.width = innerWidth;
         c.height = innerHeight;
 
-        const chars = "日月火水木金土星人天地山川花鳥風雨雪雷電雲海空愛心夢希望未来時間空間生命宇宙自然科技人工智能量子計算機器學習大數據區塊鏈虛擬現實增強現實元宇宙".split("");
+        const chars = "日月火水木金土星人天地山川花鳥風雨雪雷電雲海空愛心夢希望未来時間空間生命宇宙自然科技人工智能量子計算機器學習大數據區塊鏈虛擬現實增強現實元宇宙АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя".split("");
         const font = 16;
         const cols = c.width / font;
         const drops = Array(Math.floor(cols)).fill(1);
