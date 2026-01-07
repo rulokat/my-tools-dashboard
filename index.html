@@ -52,11 +52,11 @@
             background: #0e0e0e;
             padding: 90px 20px 20px;
             border-right: 1px solid var(--border);
-            transition: inset-left 0.4s ease;
+            transition: left 0.4s ease;
             z-index: 999;
             box-shadow: 0 0 30px rgba(0,0,0,0.8);
         }
-        nav.open { inset-left: 0; }
+        nav.open { left: 0; }
 
         nav h2 { margin-bottom: 40px; font-size: 1.5em; text-align: center; }
         nav ul { list-style: none; }
@@ -162,7 +162,9 @@
 <body>
     <canvas id="matrix"></canvas>
 
-    <div id="menu-btn"><i class="fas fa-bars"></i></div>
+    <div id="menu-btn">
+        <i class="fas fa-bars"></i>
+    </div>
 
     <nav id="sidebar">
         <h2>Rulo-Archive</h2>
@@ -187,14 +189,14 @@
     </main>
 
     <script>
-        // Matrix yağmuru
+        // Çince/Japonca tarzı Matrix yağmuru
         const c = document.getElementById('matrix');
         const ctx = c.getContext('2d');
         c.width = innerWidth;
         c.height = innerHeight;
 
-        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}".split("");
-        const font = 14;
+        const chars = "田由甲申甴电甶男甸甹町画甼甽甾甿畀畁畂畃畄畅畆畇畈畉畊畋界畍畎畏畐畑".split("");
+        const font = 16;
         const cols = c.width / font;
         const drops = Array(Math.floor(cols)).fill(1);
 
@@ -211,15 +213,16 @@
                 drops[i]++;
             });
         }
-        setInterval(rain, 35);
+        setInterval(rain, 40);
         addEventListener('resize', () => {
             c.width = innerWidth;
             c.height = innerHeight;
         });
 
-        // Menü
-        const toggle = () => document.getElementById('sidebar').classList.toggle('open');
-        document.getElementById('menu-btn').onclick = toggle;
+        // Menü aç/kapa (düzeltildi)
+        document.getElementById('menu-btn').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('open');
+        });
 
         const JSON_URL = "https://raw.githubusercontent.com/rulokat/my-tools-dashboard/main/data/ping-results.json";
         let allSites = [];
