@@ -5,59 +5,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Araçlar Paneli</title>
     <style>
-        :root { --bg: #0d1117; --text: #00ff41; --accent: #21262d; }
+        :root { --bg: #0d1117; --text: #00ff41; --accent: #161b22; --green: #00ff00; --red: #ff0000; }
         body { margin:0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
-        nav { width: 250px; background: #161b22; padding: 20px; border-right: 1px solid #30363d; }
-        nav h2 { margin: 0 0 30px; text-align: center; }
+        nav { width: 250px; background: #010409; padding: 20px; border-right: 1px solid #30363d; }
+        nav h2 { margin: 0 0 30px; text-align: center; color: var(--text); }
         nav ul { list-style: none; padding: 0; }
-        nav li { padding: 12px; cursor: pointer; border-radius: 6px; margin-bottom: 8px; }
+        nav li { padding: 14px; cursor: pointer; border-radius: 8px; margin-bottom: 8px; transition: 0.3s; }
         nav li:hover, nav li.active { background: var(--accent); }
         main { flex: 1; padding: 30px; }
-        .card { background: var(--accent); padding: 20px; border-radius: 8px; margin-bottom: 20px; }
-        h1 { text-align: center; }
+        .card { background: var(--accent); padding: 20px; border-radius: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #30363d; }
+        th { background: #010409; }
+        .status-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 10px; }
+        .online { background: var(--green); box-shadow: 0 0 10px var(--green); }
+        .offline { background: var(--red); box-shadow: 0 0 10px var(--red); }
+        .last-update { text-align: center; margin-top: 20px; font-size: 0.9em; opacity: 0.8; }
     </style>
 </head>
 <body>
     <nav>
         <h2>Araçlar</h2>
         <ul>
-            <li class="active" onclick="showSection('home')">Ana Sayfa</li>
-            <li onclick="showSection('ping')">Site Ping İzleyici</li>
+            <li onclick="showSection('home')">Ana Sayfa</li>
+            <li class="active" onclick="showSection('ping')">Site Ping İzleyici</li>
             <li onclick="showSection('borsa')">Borsa Takip</li>
             <li onclick="showSection('hava')">Hava Durumu</li>
-            <li onclick="showSection('diger')">Diğer Araçlar</li>
+            <li onclick="showSection('diger')">Diğer</li>
         </ul>
     </nav>
     <main>
-        <h1 id="title">Hoş Geldin!</h1>
+        <h1 id="title">Site Ping İzleyici</h1>
         <div id="content" class="card">
-            <p>Burası senin kişisel araç panelin. Soldaki menüden istediğin aracı seç.</p>
+            <p>Yükleniyor...</p>
+            <div id="last-update" class="last-update"></div>
+            <table id="ping-table">
+                <thead>
+                    <tr>
+                        <th>Durum</th>
+                        <th>Site</th>
+                        <th>Latency</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </main>
 
     <script>
+        const JSON_URL = "https://raw.githubusercontent.com/rulokat/my-tools-dashboard/main/data/ping-results.json";
+
         function showSection(sec) {
             document.querySelectorAll('nav li').forEach(li => li.classList.remove('active'));
             event.target.classList.add('active');
             const title = document.getElementById('title');
-            const content = document.getElementById('content');
-            if (sec === 'home') {
-                title.textContent = 'Hoş Geldin!';
-                content.innerHTML = '<p>Burası senin kişisel araç panelin. Soldaki menüden istediğin aracı seç.</p>';
-            } else if (sec === 'ping') {
-                title.textContent = 'Site Ping İzleyici';
-                content.innerHTML = '<p>Yakında 100 siteye ping sonuçları burada görünecek...</p>';
-            } else if (sec === 'borsa') {
-                title.textContent = 'Borsa Takip';
-                content.innerHTML = '<p>Anlık borsa verileri yakında burada...</p>';
-            } else if (sec === 'hava') {
-                title.textContent = 'Hava Durumu';
-                content.innerHTML = '<p>Seçtiğin şehirlerin hava durumu yakında burada...</p>';
-            } else {
-                title.textContent = 'Diğer Araçlar';
-                content.innerHTML = '<p>QR kod, şifre üretici vs. eklenecek...</p>';
+            if (sec === 'home') title.textContent = 'Hoş Geldin!';
+            else if (sec === 'ping') title.textContent = 'Site Ping İzleyici';
+            else if (sec === 'borsa') title.textContent = 'Borsa Takip';
+            else if (sec === 'hava') title.textContent = 'Hava Durumu';
+            else title.textContent = 'Diğer Araçlar';
+
+            if (sec === 'ping') loadPingData();
+        }
+
+        async function loadPingData() {
+            try {
+                const response = await fetch(JSON_URL + "?t=" + Date.now()); // cache engelle
+                const data = await response.json();
+
+                const tbody = document.querySelector('#ping-table tbody');
+                tbody.innerHTML = '';
+
+                data.data.forEach(item => {
+                    const row = document.createElement('tr');
+                    const statusDot = `<span class="status-dot ${item.online ? 'online' : 'offline'}"></span>`;
+                    const latency = item.latency >= 0 ? `${item.latency} ms` : 'Timeout';
+                    row.innerHTML = `
+                        <td>${statusDot}</td>
+                        <td>${item.site}</td>
+                        <td>${latency}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                const updateTime = new Date(data.lastUpdate);
+                const now = new Date();
+                const diff = Math.floor((now - updateTime) / 60000);
+                document.getElementById('last-update').textContent = 
+                    `Son güncelleme: ${diff === 0 ? 'az önce' : diff + ' dk önce'}`;
+            } catch (error) {
+                document.getElementById('content').innerHTML = '<p>Veri yüklenemedi. Worker çalışıyor mu?</p>';
             }
         }
+
+        // Sayfa açılınca ve her 30 saniyede bir yenile
+        loadPingData();
+        setInterval(loadPingData, 30000);
     </script>
 </body>
 </html>
