@@ -24,7 +24,6 @@
             overflow-x: hidden;
             position: relative;
         }
-        /* Matrix Yağmuru */
         #matrix-bg {
             position: fixed;
             top: 0; left: 0;
@@ -190,11 +189,11 @@
     <nav id="sidebar">
         <h2>Rulo-Archive</h2>
         <ul>
-            <li class="active" onclick="showSection('home')"><i class="fas fa-home"></i> Ana Sayfa</li>
-            <li onclick="showSection('ping')"><i class="fas fa-globe"></i> Tüm Siteler</li>
-            <li onclick="showSection('borsa')"><i class="fas fa-chart-line"></i> Borsa Takip</li>
-            <li onclick="showSection('hava')"><i class="fas fa-cloud-sun"></i> Hava Durumu</li>
-            <li onclick="showSection('diger')"><i class="fas fa-tools"></i> Diğer Araçlar</li>
+            <li class="active" data-section="home"><i class="fas fa-home"></i> Ana Sayfa</li>
+            <li data-section="ping"><i class="fas fa-globe"></i> Tüm Siteler</li>
+            <li data-section="borsa"><i class="fas fa-chart-line"></i> Borsa Takip</li>
+            <li data-section="hava"><i class="fas fa-cloud-sun"></i> Hava Durumu</li>
+            <li data-section="diger"><i class="fas fa-tools"></i> Diğer Araçlar</li>
         </ul>
     </nav>
 
@@ -202,7 +201,7 @@
         <h1 id="title">Rulo-Archive</h1>
         <div id="content">
             <div id="search-container">
-                <input type="text" id="search-input" placeholder="Site veya etiket ara... (örn: youtube, google, video)">
+                <input type="text" id="search-input" placeholder="Site ara... (örn: youtube, google)">
             </div>
             <div id="ping-grid"></div>
         </div>
@@ -253,37 +252,65 @@
         const JSON_URL = "https://raw.githubusercontent.com/rulokat/my-tools-dashboard/main/data/ping-results.json";
         let allData = [];
 
+        // Menü tıklama (data-section ile daha sağlam)
+        document.querySelectorAll('nav li').forEach(li => {
+            li.addEventListener('click', () => {
+                document.querySelectorAll('nav li').forEach(item => item.classList.remove('active'));
+                li.classList.add('active');
+
+                const sec = li.getAttribute('data-section');
+                const title = document.getElementById('title');
+
+                if (sec === 'home') {
+                    title.textContent = 'Rulo-Archive';
+                    document.getElementById('content').innerHTML = `
+                        <div id="search-container">
+                            <input type="text" id="search-input" placeholder="Site ara... (örn: youtube, google)">
+                        </div>
+                        <div id="ping-grid"></div>
+                    `;
+                    setupSearch();
+                    renderSites([]); // Boş başla
+                } else if (sec === 'ping') {
+                    title.textContent = 'Tüm Siteler';
+                    document.getElementById('content').innerHTML = `<div id="ping-grid"></div>`;
+                    renderSites(allData);
+                } else {
+                    title.textContent = li.textContent.trim();
+                    document.getElementById('content').innerHTML = '<p style="text-align:center; color:#888; font-size:1.3em; margin-top:100px;">Bu bölüm yakında eklenecek...</p>';
+                }
+            });
+        });
+
         async function loadPingData() {
             try {
                 const response = await fetch(JSON_URL + "?t=" + Date.now());
                 const data = await response.json();
                 allData = data.data.map(item => ({
-                    ...item,
+                    site: item.site,
+                    latency: item.latency,
+                    online: item.online,
                     cleanName: item.site
                         .replace(/^www\./, '')
                         .replace(/\.(com|org|net|io|co|edu|gov|tv|me|app)$/, '')
                         .split('.')
                         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                        .join(' '),
-                    tags: item.tags || [] // Worker'dan tags varsa alır
+                        .join(' ')
                 }));
-                // Sayfa açılınca hiçbir şey gösterme
-                renderSites([]);
-                document.getElementById('last-update').textContent = 'Arama yapın...';
+
+                // Ana sayfadaysak boş göster
+                if (document.querySelector('nav li.active').getAttribute('data-section') === 'home') {
+                    renderSites([]);
+                }
             } catch (error) {
                 console.error("Veri yüklenemedi:", error);
-                document.getElementById('last-update').textContent = 'Veri yüklenemedi.';
             }
         }
 
         function renderSites(sites) {
             const grid = document.getElementById('ping-grid');
+            if (!grid) return;
             grid.innerHTML = '';
-
-            if (sites.length === 0) {
-                grid.innerHTML = '<p style="grid-column: 1 / -1; text-align:center; color:#888; font-size:1.2em;">Sonuç bulunamadı. Farklı bir şey deneyin.</p>';
-                return;
-            }
 
             sites.forEach(item => {
                 const card = document.createElement('div');
@@ -305,39 +332,34 @@
             });
         }
 
-        function filterSites() {
-            const query = document.getElementById('search-input').value.toLowerCase().trim();
-            if (!query) {
-                renderSites([]);
-                document.getElementById('last-update').textContent = 'Arama yapın...';
-                return;
-            }
+        function setupSearch() {
+            const input = document.getElementById('search-input');
+            if (!input) return;
 
-            const filtered = allData.filter(item =>
-                item.site.toLowerCase().includes(query) ||
-                item.cleanName.toLowerCase().includes(query) ||
-                (item.tags && item.tags.some(tag => tag.toLowerCase().includes(query)))
-            );
+            input.addEventListener('input', () => {
+                const query = input.value.toLowerCase().trim();
+                if (!query) {
+                    renderSites([]);
+                    document.getElementById('last-update').textContent = 'Arama yapın...';
+                    return;
+                }
 
-            renderSites(filtered);
+                const filtered = allData.filter(item =>
+                    item.site.toLowerCase().includes(query) ||
+                    item.cleanName.toLowerCase().includes(query)
+                );
 
-            const updateTime = new Date();
-            const diff = 0;
-            document.getElementById('last-update').textContent = 
-                `${filtered.length} sonuç bulundu • Son güncelleme: az önce`;
+                renderSites(filtered);
+                document.getElementById('last-update').textContent = `${filtered.length} sonuç bulundu`;
+            });
         }
 
-        // Event listener'ı doğru bağla
-        document.addEventListener('DOMContentLoaded', () => {
-            loadPingData();
-            const searchInput = document.getElementById('search-input');
-            if (searchInput) {
-                searchInput.addEventListener('input', filterSites);
-            }
-        });
-
-        // Otomatik yenileme (veri güncellensin)
+        // İlk yükleme
+        loadPingData();
         setInterval(loadPingData, 30000);
+
+        // Sayfa yüklendikten sonra arama kur
+        document.addEventListener('DOMContentLoaded', setupSearch);
     </script>
 </body>
 </html>
