@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2026-01-07T20:20:20.009Z",
+  "lastUpdate": "2026-01-07T20:24:19.453Z",
   "ping": {
     "totalSites": 10,
     "data": [
@@ -12,10 +12,10 @@
           "google",
           "information"
         ],
-        "latency": 2,
-        "status": 403,
+        "latency": 440,
+        "status": 204,
         "online": true,
-        "timestamp": "2026-01-07T20:20:18.342Z"
+        "timestamp": "2026-01-07T20:24:17.716Z"
       },
       {
         "site": "youtube.com",
@@ -26,10 +26,10 @@
           "google",
           "music"
         ],
-        "latency": 1,
-        "status": 403,
+        "latency": 200,
+        "status": 200,
         "online": true,
-        "timestamp": "2026-01-07T20:20:18.343Z"
+        "timestamp": "2026-01-07T20:24:17.916Z"
       },
       {
         "site": "github.com",
@@ -40,10 +40,10 @@
           "open-source",
           "programming"
         ],
-        "latency": 1,
-        "status": 403,
+        "latency": 16,
+        "status": 200,
         "online": true,
-        "timestamp": "2026-01-07T20:20:18.344Z"
+        "timestamp": "2026-01-07T20:24:17.932Z"
       },
       {
         "site": "cloudflare.com",
@@ -54,10 +54,10 @@
           "hosting",
           "dns"
         ],
-        "latency": 1,
-        "status": 403,
+        "latency": 172,
+        "status": 200,
         "online": true,
-        "timestamp": "2026-01-07T20:20:18.345Z"
+        "timestamp": "2026-01-07T20:24:18.104Z"
       },
       {
         "site": "twitter.com",
@@ -68,10 +68,10 @@
           "microblogging",
           "x"
         ],
-        "latency": 1,
+        "latency": 132,
         "status": 403,
         "online": true,
-        "timestamp": "2026-01-07T20:20:18.346Z"
+        "timestamp": "2026-01-07T20:24:18.236Z"
       },
       {
         "site": "instagram.com",
@@ -82,10 +82,10 @@
           "meta",
           "sharing"
         ],
-        "latency": 2,
-        "status": 403,
+        "latency": 193,
+        "status": 200,
         "online": true,
-        "timestamp": "2026-01-07T20:20:18.348Z"
+        "timestamp": "2026-01-07T20:24:18.429Z"
       },
       {
         "site": "wikipedia.org",
@@ -96,10 +96,10 @@
           "education",
           "wiki"
         ],
-        "latency": 1,
+        "latency": 136,
         "status": 403,
         "online": true,
-        "timestamp": "2026-01-07T20:20:18.349Z"
+        "timestamp": "2026-01-07T20:24:18.565Z"
       },
       {
         "site": "amazon.com",
@@ -110,10 +110,10 @@
           "cloud",
           "aws"
         ],
-        "latency": 1,
-        "status": 403,
+        "latency": 683,
+        "status": 200,
         "online": true,
-        "timestamp": "2026-01-07T20:20:18.350Z"
+        "timestamp": "2026-01-07T20:24:19.248Z"
       },
       {
         "site": "reddit.com",
@@ -124,10 +124,10 @@
           "discussion",
           "social"
         ],
-        "latency": 1,
+        "latency": 60,
         "status": 403,
         "online": true,
-        "timestamp": "2026-01-07T20:20:18.351Z"
+        "timestamp": "2026-01-07T20:24:19.308Z"
       },
       {
         "site": "netflix.com",
@@ -138,21 +138,53 @@
           "entertainment",
           "video"
         ],
-        "latency": 1,
-        "status": 403,
+        "latency": 145,
+        "status": 405,
         "online": true,
-        "timestamp": "2026-01-07T20:20:18.352Z"
+        "timestamp": "2026-01-07T20:24:19.453Z"
       }
     ]
   },
   "borsa": {
-    "usd": "Yükleniyor...",
-    "eur": "Yükleniyor...",
-    "gold": "Yükleniyor...",
+    "lastUpdate": "2026-01-07T20:24:19.453Z",
+    "usd": "34.25 ₺",
+    "eur": "37.18 ₺",
+    "gold": "2.450,00 ₺",
     "bist100": {
-      "value": "Yükleniyor...",
-      "change": 0
+      "value": "10.845,32",
+      "change": 1.24
     },
-    "stocks": {}
+    "stocks": [
+      {
+        "symbol": "THYAO",
+        "name": "Türk Hava Yolları",
+        "price": "295,50",
+        "change": 2.15
+      },
+      {
+        "symbol": "GARAN",
+        "name": "Garanti Bankası",
+        "price": "112,40",
+        "change": -0.85
+      },
+      {
+        "symbol": "AKBNK",
+        "name": "Akbank",
+        "price": "68,20",
+        "change": 1.45
+      },
+      {
+        "symbol": "EREGL",
+        "name": "Ereğli Demir Çelik",
+        "price": "48,90",
+        "change": 3.2
+      },
+      {
+        "symbol": "SISE",
+        "name": "Şişe Cam",
+        "price": "48,15",
+        "change": -1.1
+      }
+    ]
   }
 }
