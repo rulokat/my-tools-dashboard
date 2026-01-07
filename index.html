@@ -24,7 +24,7 @@
             overflow-x: hidden;
             position: relative;
         }
-        /* Matrix Yağmuru Arka Plan */
+        /* Matrix Yağmuru */
         #matrix-bg {
             position: fixed;
             top: 0; left: 0;
@@ -34,7 +34,6 @@
             opacity: 0.2;
         }
 
-        /* Hamburger Menü */
         #menu-toggle {
             position: fixed;
             top: 20px;
@@ -54,7 +53,6 @@
         #menu-toggle:hover { transform: scale(1.1); background: var(--accent); }
         #menu-toggle i { font-size: 1.6em; color: var(--text); }
 
-        /* Sol Menü */
         nav {
             position: fixed;
             left: -260px;
@@ -183,15 +181,12 @@
     </style>
 </head>
 <body>
-    <!-- Matrix Yağmuru -->
     <canvas id="matrix-bg"></canvas>
 
-    <!-- Hamburger -->
     <div id="menu-toggle" onclick="toggleMenu()">
         <i class="fas fa-bars"></i>
     </div>
 
-    <!-- Sol Menü -->
     <nav id="sidebar">
         <h2>Rulo-Archive</h2>
         <ul>
@@ -207,15 +202,15 @@
         <h1 id="title">Rulo-Archive</h1>
         <div id="content">
             <div id="search-container">
-                <input type="text" id="search-input" placeholder="Site ara... (örn: youtube, google)">
+                <input type="text" id="search-input" placeholder="Site veya etiket ara... (örn: youtube, google, video)">
             </div>
             <div id="ping-grid"></div>
         </div>
-        <div id="last-update" class="last-update">Veri yükleniyor...</div>
+        <div id="last-update" class="last-update">Arama yapın...</div>
     </main>
 
     <script>
-        // Matrix Yağmuru Animasyonu
+        // Matrix Yağmuru
         const canvas = document.getElementById('matrix-bg');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
@@ -226,14 +221,11 @@
 
         const fontSize = 14;
         const columns = canvas.width / fontSize;
-
-        const drops = [];
-        for (let x = 0; x < columns; x++) drops[x] = 1;
+        const drops = Array(Math.floor(columns)).fill(1);
 
         function draw() {
             ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
             ctx.fillStyle = '#00ff41';
             ctx.font = fontSize + 'px monospace';
 
@@ -254,7 +246,6 @@
             canvas.height = window.innerHeight;
         });
 
-        // Menü Aç/Kapa
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('open');
         }
@@ -262,54 +253,37 @@
         const JSON_URL = "https://raw.githubusercontent.com/rulokat/my-tools-dashboard/main/data/ping-results.json";
         let allData = [];
 
-        function showSection(sec) {
-            document.querySelectorAll('nav li').forEach(li => li.classList.remove('active'));
-            event.target.classList.add('active');
-
-            const title = document.getElementById('title');
-
-            if (sec === 'home') {
-                title.textContent = 'Rulo-Archive';
-                document.getElementById('content').innerHTML = `
-                    <div id="search-container">
-                        <input type="text" id="search-input" placeholder="Site ara... (örn: youtube, google)">
-                    </div>
-                    <div id="ping-grid"></div>
-                `;
-                document.getElementById('search-input').addEventListener('input', filterSites);
-                loadPingData();
-            } else if (sec === 'ping') {
-                title.textContent = 'Tüm Siteler';
-                document.getElementById('content').innerHTML = `<div id="ping-grid"></div>`;
-                renderSites(allData);
-            } else {
-                title.textContent = sec.charAt(0).toUpperCase() + sec.slice(1);
-                document.getElementById('content').innerHTML = '<p style="text-align:center; color:#888; font-size:1.3em; margin-top:100px;">Bu bölüm yakında eklenecek...</p>';
-            }
-        }
-
         async function loadPingData() {
             try {
                 const response = await fetch(JSON_URL + "?t=" + Date.now());
                 const data = await response.json();
-                allData = data.data;
-                renderSites(allData);
-
-                const updateTime = new Date(data.lastUpdate);
-                const now = new Date();
-                const diff = Math.floor((now - updateTime) / 60000);
-                document.getElementById('last-update').textContent = 
-                    `Son güncelleme: ${diff === 0 ? 'az önce' : diff + ' dakika önce'}`;
+                allData = data.data.map(item => ({
+                    ...item,
+                    cleanName: item.site
+                        .replace(/^www\./, '')
+                        .replace(/\.(com|org|net|io|co|edu|gov|tv|me|app)$/, '')
+                        .split('.')
+                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                        .join(' '),
+                    tags: item.tags || [] // Worker'dan tags varsa alır
+                }));
+                // Sayfa açılınca hiçbir şey gösterme
+                renderSites([]);
+                document.getElementById('last-update').textContent = 'Arama yapın...';
             } catch (error) {
                 console.error("Veri yüklenemedi:", error);
-                document.getElementById('content').innerHTML += '<p style="text-align:center; color:#888;">Veri yüklenemedi.</p>';
+                document.getElementById('last-update').textContent = 'Veri yüklenemedi.';
             }
         }
 
         function renderSites(sites) {
             const grid = document.getElementById('ping-grid');
-            if (!grid) return;
             grid.innerHTML = '';
+
+            if (sites.length === 0) {
+                grid.innerHTML = '<p style="grid-column: 1 / -1; text-align:center; color:#888; font-size:1.2em;">Sonuç bulunamadı. Farklı bir şey deneyin.</p>';
+                return;
+            }
 
             sites.forEach(item => {
                 const card = document.createElement('div');
@@ -323,7 +297,7 @@
                     <div class="status-indicator"></div>
                     <img src="${favicon}" alt="${item.site}" class="site-favicon">
                     <div class="site-info">
-                        <div class="site-name">${item.site}</div>
+                        <div class="site-name">${item.cleanName}</div>
                     </div>
                     <div class="site-ping">${pingText}</div>
                 `;
@@ -331,18 +305,39 @@
             });
         }
 
-        function filterSites(event) {
-            const query = event.target.value.toLowerCase().trim();
+        function filterSites() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
             if (!query) {
-                renderSites(allData);
+                renderSites([]);
+                document.getElementById('last-update').textContent = 'Arama yapın...';
                 return;
             }
-            const filtered = allData.filter(item => item.site.toLowerCase().includes(query));
+
+            const filtered = allData.filter(item =>
+                item.site.toLowerCase().includes(query) ||
+                item.cleanName.toLowerCase().includes(query) ||
+                (item.tags && item.tags.some(tag => tag.toLowerCase().includes(query)))
+            );
+
             renderSites(filtered);
+
+            const updateTime = new Date();
+            const diff = 0;
+            document.getElementById('last-update').textContent = 
+                `${filtered.length} sonuç bulundu • Son güncelleme: az önce`;
         }
 
+        // Event listener'ı doğru bağla
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPingData();
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                searchInput.addEventListener('input', filterSites);
+            }
+        });
+
+        // Otomatik yenileme (veri güncellensin)
         setInterval(loadPingData, 30000);
-        loadPingData();
     </script>
 </body>
 </html>
