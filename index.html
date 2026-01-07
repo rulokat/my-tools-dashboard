@@ -136,17 +136,6 @@
             margin-right: 16px;
             box-shadow: 0 6px 12px rgba(0,0,0,0.4);
         }
-        .status {
-            position: absolute;
-            inset: 12px auto auto 12px;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            border: 3px solid #000;
-            background: var(--offline);
-        }
-        .online .status { background: var(--online); }
-        .offline .status { background: var(--offline); }
         .info { flex: 1; }
         .name { font-size: 1.1em; font-weight: 600; }
         .ping {
@@ -157,27 +146,38 @@
             inset: auto 20px 16px auto;
         }
 
-        /* Borsa ve Hava Durumu */
-        .summary-grid {
+        /* Borsa Bölümü */
+        .borsa-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 24px;
             max-width: 1600px;
             margin: 0 auto 40px;
         }
-        .weather-card {
+        .borsa-card {
             background: #181818;
             border-radius: 18px;
             padding: 16px;
-            text-align: center;
-            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            cursor: pointer;
             transition: 0.4s;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            position: relative;
         }
-        .weather-card:hover { transform: translateY(-8px); }
-        .weather-city { font-size: 1.3em; font-weight: 600; margin-bottom: 8px; }
-        .weather-temp { font-size: 2em; font-weight: 700; margin: 10px 0; }
-        .weather-condition { font-size: 1.1em; color: var(--secondary); }
-        .weather-icon { font-size: 3em; margin: 10px 0; color: #00ff41; }
+        .borsa-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+        }
+        .borsa-name { font-size: 1.1em; font-weight: 600; flex: 1; }
+        .borsa-price {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--secondary);
+            position: absolute;
+            inset: auto 20px 16px auto;
+        }
 
         .chart-container {
             background: #181818;
@@ -264,23 +264,17 @@
         const JSON_URL = "https://raw.githubusercontent.com/rulokat/my-tools-dashboard/main/data/data.json";
         let allSites = [];
         let borsaData = null;
-        let havaData = {
-            mersin: { city: "Mersin", temp: "11°C", condition: "Çoğunlukla Bulutlu", icon: "fas fa-cloud" },
-            nigde: { city: "Niğde", temp: "4°C", condition: "Parçalı Bulutlu", icon: "fas fa-cloud-sun" },
-            bodrum: { city: "Bodrum", temp: "17°C", condition: "Rüzgarlı", icon: "fas fa-wind" }
-        };
         let lastUpdate = null;
         let currentChart = null;
         let selectedStock = 'bist100';
 
-        // Örnek grafik verileri (gerçek veri için Worker'ı geliştiririz)
         const chartData = {
-            bist100: [10800, 10820, 10845, 10780, 10800, 10845],
-            THYAO: [290, 292, 295, 293, 294, 295.5],
-            GARAN: [110, 111, 112, 111.5, 112, 112.4],
-            AKBNK: [67, 67.5, 68, 67.8, 68, 68.2],
-            EREGL: [47, 48, 48.9, 48.5, 48.7, 48.9],
-            SISE: [47.5, 48, 48.2, 48, 48.1, 48.15]
+            bist100: [10800, 10820, 10845, 10780, 10800, 10845, 10845],
+            THYAO: [290, 292, 295, 293, 294, 295.5, 295],
+            GARAN: [110, 111, 112, 111.5, 112, 112.4, 112],
+            AKBNK: [67, 67.5, 68, 67.8, 68, 68.2, 68],
+            EREGL: [47, 48, 48.9, 48.5, 48.7, 48.9, 49],
+            SISE: [47.5, 48, 48.2, 48, 48.1, 48.15, 48]
         };
 
         document.querySelectorAll('nav li').forEach(li => {
@@ -306,18 +300,14 @@
                     updateTime();
                 } else if (sec === 'borsa') {
                     document.getElementById('content').innerHTML = `
-                        <div class="summary-grid" id="borsa-summary"></div>
+                        <div class="borsa-grid" id="borsa-grid"></div>
                         <div class="chart-container">
                             <div class="chart-title" id="chart-title">BIST 100</div>
                             <canvas id="stock-chart"></canvas>
                         </div>
                     `;
-                    renderBorsaSummary();
+                    renderBorsaCards();
                     renderChart('bist100');
-                    updateTime();
-                } else if (sec === 'hava') {
-                    document.getElementById('content').innerHTML = `<div class="summary-grid" id="hava-grid"></div>`;
-                    renderHava();
                     updateTime();
                 } else {
                     document.getElementById('content').innerHTML = '<p style="text-align:center; color:#888; font-size:1.4em; margin-top:120px;">Yakında eklenecek...</p>';
@@ -345,11 +335,8 @@
 
                 borsaData = data.borsa;
 
-                if (document.querySelector('nav li.active')?.dataset.sec === 'ping') {
-                    showSites(allSites);
-                }
                 if (document.querySelector('nav li.active')?.dataset.sec === 'borsa') {
-                    renderBorsaSummary();
+                    renderBorsaCards();
                 }
                 updateTime();
             } catch (e) {
@@ -371,11 +358,10 @@
 
             sites.forEach(s => {
                 const card = document.createElement('div');
-                card.className = `card ${s.online ? 'online' : 'offline'}`;
+                card.className = 'card';
                 card.onclick = () => open('https://' + s.site, '_blank');
 
                 card.innerHTML = `
-                    <div class="status"></div>
                     <img src="https://www.google.com/s2/favicons?domain=${s.site}&sz=128" class="favicon">
                     <div class="info">
                         <div class="name">${s.cleanName}</div>
@@ -386,57 +372,53 @@
             });
         }
 
-        function renderBorsaSummary() {
+        function renderBorsaCards() {
             if (!borsaData) return;
-            const summary = document.getElementById('borsa-summary');
-            summary.innerHTML = `
-                <div class="card" onclick="selectStock('usd')">
-                    <div class="info">
-                        <div class="name">Dolar</div>
-                    </div>
-                    <div class="ping">${borsaData.usd}</div>
-                </div>
-                <div class="card" onclick="selectStock('eur')">
-                    <div class="info">
-                        <div class="name">Euro</div>
-                    </div>
-                    <div class="ping">${borsaData.eur}</div>
-                </div>
-                <div class="card" onclick="selectStock('gold')">
-                    <div class="info">
-                        <div class="name">Altın (Gram)</div>
-                    </div>
-                    <div class="ping">${borsaData.gold}</div>
-                </div>
-                <div class="card" onclick="selectStock('bist100')">
-                    <div class="info">
-                        <div class="name">BIST 100</div>
-                    </div>
-                    <div class="ping">${borsaData.bist100.value}</div>
-                    <div class="status" style="background:${borsaData.bist100.change >= 0 ? 'var(--online)' : 'var(--offline)'}; inset:auto 20px 16px auto;"></div>
-                </div>
-            ` + borsaData.stocks.map(stock => `
-                <div class="card" onclick="selectStock('${stock.symbol}')">
-                    <div class="info">
-                        <div class="name">${stock.name}</div>
-                    </div>
-                    <div class="ping">${stock.price}</div>
-                    <div class="status" style="background:${stock.change >= 0 ? 'var(--online)' : 'var(--offline)'}; inset:auto 20px 16px auto;"></div>
-                </div>
-            `).join('');
+            const grid = document.getElementById('borsa-grid');
+            grid.innerHTML = '';
+
+            const items = [
+                { name: 'Dolar', value: borsaData.usd, symbol: 'usd' },
+                { name: 'Euro', value: borsaData.eur, symbol: 'eur' },
+                { name: 'Altın (Gram)', value: borsaData.gold, symbol: 'gold' },
+                { name: 'BIST 100', value: borsaData.bist100.value, change: borsaData.bist100.change, symbol: 'bist100' }
+            ];
+
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'borsa-card';
+                card.onclick = () => selectStock(item.symbol);
+                card.innerHTML = `
+                    <div class="borsa-name">${item.name}</div>
+                    <div class="borsa-price">${item.value} ${item.change !== undefined ? '' : '₺'}</div>
+                `;
+                grid.appendChild(card);
+            });
+
+            borsaData.stocks.forEach(stock => {
+                const card = document.createElement('div');
+                card.className = 'borsa-card';
+                card.onclick = () => selectStock(stock.symbol);
+                card.innerHTML = `
+                    <div class="borsa-name">${stock.name} (${stock.symbol})</div>
+                    <div class="borsa-price">${stock.price} ₺</div>
+                `;
+                grid.appendChild(card);
+            });
         }
 
         function selectStock(symbol) {
             selectedStock = symbol.toLowerCase();
-            document.getElementById('chart-title').textContent = symbol === 'usd' ? 'Dolar' : symbol === 'eur' ? 'Euro' : symbol === 'gold' ? 'Altın' : symbol.toUpperCase();
+            document.getElementById('chart-title').textContent = symbol.toUpperCase();
             renderChart(selectedStock);
         }
 
         function renderChart(symbol) {
-            const ctx = document.getElementById('stock-chart').getContext('2d');
+            const ctx = document.getElementById('stock-chart')?.getContext('2d');
+            if (!ctx) return;
             if (currentChart) currentChart.destroy();
 
-            const data = chartData[symbol] || chartData['bist100'];
+            const dataPoints = chartData[symbol] || chartData['bist100'];
             const labels = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
 
             currentChart = new Chart(ctx, {
@@ -445,7 +427,7 @@
                     labels: labels,
                     datasets: [{
                         label: symbol.toUpperCase(),
-                        data: data,
+                        data: dataPoints,
                         borderColor: '#00ff41',
                         backgroundColor: 'rgba(0,255,65,0.1)',
                         borderWidth: 3,
@@ -462,25 +444,6 @@
                         y: { grid: { color: '#333' }, ticks: { color: '#aaaaaa' } }
                     }
                 }
-            });
-        }
-
-        function renderHava() {
-            const grid = document.getElementById('content').querySelector('.summary-grid') || document.getElementById('grid');
-            if (!grid) return;
-            grid.className = 'summary-grid';
-            grid.innerHTML = '';
-
-            Object.values(havaData).forEach(city => {
-                const card = document.createElement('div');
-                card.className = 'weather-card';
-                card.innerHTML = `
-                    <div class="weather-city">${city.city}</div>
-                    <i class="${city.icon} weather-icon"></i>
-                    <div class="weather-temp">${city.temp}</div>
-                    <div class="weather-condition">${city.condition}</div>
-                `;
-                grid.appendChild(card);
             });
         }
 
