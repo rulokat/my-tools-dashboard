@@ -105,15 +105,15 @@
 
         #grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 28px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
             max-width: 1600px;
             margin: 0 auto;
         }
         .card {
             background: #181818;
-            border-radius: 22px;
-            padding: 24px;
+            border-radius: 18px;
+            padding: 16px; /* küçültüldü */
             display: flex;
             align-items: center;
             cursor: pointer;
@@ -122,34 +122,34 @@
             box-shadow: var(--shadow);
         }
         .card:hover {
-            transform: translateY(-12px) scale(1.05);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+            transform: translateY(-8px) scale(1.03); /* hover efekti hafifletildi */
+            box-shadow: 0 20px 40px rgba(0,0,0,0.7);
         }
         .favicon {
-            width: 70px;
-            height: 70px;
-            border-radius: 18px;
-            margin-right: 24px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            width: 40px; /* küçültüldü */
+            height: 40px;
+            border-radius: 12px;
+            margin-right: 16px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
         }
         .status {
             position: absolute;
-            inset: 18px auto auto 18px;
-            width: 18px;
-            height: 18px;
+            inset: 12px auto auto 12px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
-            border: 4px solid #000;
+            border: 3px solid #000;
         }
-        .online .status { background: var(--online); box-shadow: 0 0 20px rgba(0,255,65,0.8); }
-        .offline .status { background: var(--offline); box-shadow: 0 0 15px rgba(255,68,68,0.6); }
+        .online .status { background: var(--online); box-shadow: 0 0 12px rgba(0,255,65,0.6); }
+        .offline .status { background: var(--offline); box-shadow: 0 0 10px rgba(255,68,68,0.5); }
         .info { flex: 1; }
-        .name { font-size: 1.5em; font-weight: 700; }
+        .name { font-size: 1.1em; font-weight: 600; } /* küçültüldü */
         .ping {
-            font-size: 2em;
-            font-weight: 800;
+            font-size: 1.3em; /* küçültüldü */
+            font-weight: 700;
             color: var(--secondary);
             position: absolute;
-            inset: auto 28px 24px auto;
+            inset: auto 20px 16px auto;
         }
         .update {
             text-align: center;
@@ -189,13 +189,13 @@
     </main>
 
     <script>
-        // Çince/Japonca tarzı Matrix yağmuru
+        // Mandarin (Çince) karakterlerle Matrix yağmuru
         const c = document.getElementById('matrix');
         const ctx = c.getContext('2d');
         c.width = innerWidth;
         c.height = innerHeight;
 
-        const chars = "田由甲申甴电甶男甸甹町画甼甽甾甿畀畁畂畃畄畅畆畇畈畉畊畋界畍畎畏畐畑".split("");
+        const chars = "日月火水木金土星人天地山川花鳥風雨雪雷電雲海空愛心夢希望未来時間空間生命宇宙自然科技人工智能量子計算機器學習大數據區塊鏈虛擬現實增強現實元宇宙".split("");
         const font = 16;
         const cols = c.width / font;
         const drops = Array(Math.floor(cols)).fill(1);
@@ -219,7 +219,6 @@
             c.height = innerHeight;
         });
 
-        // Menü aç/kapa (düzeltildi)
         document.getElementById('menu-btn').addEventListener('click', () => {
             document.getElementById('sidebar').classList.toggle('open');
         });
@@ -228,7 +227,6 @@
         let allSites = [];
         let lastUpdate = null;
 
-        // Menü tıklama
         document.querySelectorAll('nav li').forEach(li => {
             li.onclick = () => {
                 document.querySelectorAll('nav li').forEach(l => l.classList.remove('active'));
