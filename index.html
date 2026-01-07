@@ -6,6 +6,9 @@
     <title>Rulo-Archive</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial"></script>
     <style>
         :root {
             --bg: #0a0a0a;
@@ -193,27 +196,27 @@
         }
         .chart-title { font-size: 1.4em; text-align: center; margin-bottom: 20px; color: var(--text); }
 
-        /* Ticker Tabela */
+        /* Ticker Tabela - En Üstte */
         .ticker-wrapper {
             background: #000;
             overflow: hidden;
             padding: 12px 0;
-            margin-top: 40px;
+            margin-bottom: 40px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.8);
         }
         .ticker {
             display: flex;
             white-space: nowrap;
-            animation: scroll 60s linear infinite;
+            animation: scroll 80s linear infinite;
         }
         .ticker-item {
-            margin: 0 40px;
+            margin: 0 50px;
             font-family: 'Courier New', monospace;
-            font-size: 1.4em;
+            font-size: 1.5em;
             font-weight: bold;
         }
-        .ticker-symbol { color: var(--text); margin-right: 12px; }
-        .ticker-price { color: var(--text); margin-right: 12px; }
+        .ticker-symbol { color: var(--text); margin-right: 16px; }
+        .ticker-price { color: var(--text); margin-right: 16px; }
         .ticker-change.up { color: var(--up); }
         .ticker-change.down { color: var(--down); }
 
@@ -228,6 +231,28 @@
             color: var(--secondary);
             font-size: 1.1em;
         }
+
+        /* Hava Durumu */
+        .weather-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .weather-card {
+            background: #181818;
+            border-radius: 18px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: 0.4s;
+        }
+        .weather-card:hover { transform: translateY(-8px); }
+        .weather-city { font-size: 1.4em; font-weight: 600; margin-bottom: 12px; }
+        .weather-temp { font-size: 2.5em; font-weight: 700; margin: 16px 0; }
+        .weather-condition { font-size: 1.2em; color: var(--secondary); margin-bottom: 8px; }
+        .weather-icon { font-size: 4em; color: #00ff41; margin: 16px 0; }
     </style>
 </head>
 <body>
@@ -301,13 +326,27 @@
         let currentChart = null;
         let selectedStock = 'bist100';
 
-        const chartData = {
-            bist100: [10800, 10820, 10845, 10780, 10800, 10845, 10845],
-            THYAO: [290, 292, 295, 293, 294, 295.5, 295],
-            GARAN: [110, 111, 112, 111.5, 112, 112.4, 112],
-            AKBNK: [67, 67.5, 68, 67.8, 68, 68.2, 68],
-            EREGL: [47, 48, 48.9, 48.5, 48.7, 48.9, 49],
-            SISE: [47.5, 48, 48.2, 48, 48.1, 48.15, 48]
+        // Mum grafik için örnek veri (her hisse için haftalık OHLC)
+        const candleData = {
+            bist100: [
+                { x: '2026-01-01', o: 10750, h: 10850, l: 10720, c: 10845 },
+                { x: '2026-01-02', o: 10845, h: 10880, l: 10810, c: 10820 },
+                { x: '2026-01-03', o: 10820, h: 10890, l: 10790, c: 10845 },
+                { x: '2026-01-04', o: 10845, h: 10860, l: 10750, c: 10780 },
+                { x: '2026-01-05', o: 10780, h: 10830, l: 10760, c: 10800 },
+                { x: '2026-01-06', o: 10800, h: 10850, l: 10790, c: 10845 },
+                { x: '2026-01-07', o: 10845, h: 10870, l: 10820, c: 10845 }
+            ],
+            THYAO: [
+                { x: '2026-01-01', o: 292, h: 296, l: 291, c: 295 },
+                { x: '2026-01-02', o: 295, h: 297, l: 294, c: 293 },
+                { x: '2026-01-03', o: 293, h: 296, l: 292, c: 295.5 },
+                { x: '2026-01-04', o: 295.5, h: 296, l: 294, c: 295 },
+                { x: '2026-01-05', o: 295, h: 296, l: 294, c: 295 },
+                { x: '2026-01-06', o: 295, h: 296, l: 294, c: 295 },
+                { x: '2026-01-07', o: 295, h: 296, l: 294, c: 295 }
+            ],
+            // Diğer hisseler için de benzer veri ekleyebilirsin
         };
 
         document.querySelectorAll('nav li').forEach(li => {
@@ -333,18 +372,22 @@
                     updateTime();
                 } else if (sec === 'borsa') {
                     document.getElementById('content').innerHTML = `
+                        <div class="ticker-wrapper">
+                            <div class="ticker" id="ticker"></div>
+                        </div>
                         <div class="borsa-grid" id="borsa-grid"></div>
                         <div class="chart-container">
                             <div class="chart-title" id="chart-title">BIST 100</div>
                             <canvas id="stock-chart"></canvas>
                         </div>
-                        <div class="ticker-wrapper">
-                            <div class="ticker" id="ticker"></div>
-                        </div>
                     `;
                     renderBorsaCards();
-                    renderChart('bist100');
                     startTicker();
+                    renderCandleChart('bist100');
+                    updateTime();
+                } else if (sec === 'hava') {
+                    document.getElementById('content').innerHTML = `<div class="weather-grid" id="hava-grid"></div>`;
+                    renderHava();
                     updateTime();
                 } else {
                     document.getElementById('content').innerHTML = '<p style="text-align:center; color:#888; font-size:1.4em; margin-top:120px;">Yakında eklenecek...</p>';
@@ -448,37 +491,34 @@
         function selectStock(symbol) {
             selectedStock = symbol.toLowerCase();
             document.getElementById('chart-title').textContent = symbol.toUpperCase();
-            renderChart(selectedStock);
+            renderCandleChart(selectedStock);
         }
 
-        function renderChart(symbol) {
+        function renderCandleChart(symbol) {
             const ctx = document.getElementById('stock-chart')?.getContext('2d');
             if (!ctx) return;
             if (currentChart) currentChart.destroy();
 
-            const dataPoints = chartData[symbol] || chartData['bist100'];
-            const labels = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+            const data = candleData[symbol] || candleData['bist100'];
 
             currentChart = new Chart(ctx, {
-                type: 'line',
+                type: 'candlestick',
                 data: {
-                    labels: labels,
                     datasets: [{
                         label: symbol.toUpperCase(),
-                        data: dataPoints,
-                        borderColor: '#00ff41',
-                        backgroundColor: 'rgba(0,255,65,0.1)',
-                        borderWidth: 3,
-                        pointRadius: 5,
-                        tension: 0.4,
-                        fill: true
+                        data: data
                     }]
                 },
                 options: {
                     responsive: true,
                     plugins: { legend: { display: false } },
                     scales: {
-                        x: { grid: { color: '#333' }, ticks: { color: '#aaaaaa' } },
+                        x: { 
+                            type: 'time',
+                            time: { unit: 'day' },
+                            grid: { color: '#333' },
+                            ticks: { color: '#aaaaaa' }
+                        },
                         y: { grid: { color: '#333' }, ticks: { color: '#aaaaaa' } }
                     }
                 }
@@ -509,8 +549,36 @@
                     </span>
                 `;
                 ticker.appendChild(span);
-                ticker.appendChild(span.cloneNode(true)); // Akışı kesintisiz yapmak için kopyala
+                ticker.appendChild(span.cloneNode(true)); // Kesintisiz akış için
             });
+        }
+
+        function renderHava() {
+            const grid = document.getElementById('content').querySelector('#hava-grid') || document.createElement('div');
+            grid.className = 'weather-grid';
+            grid.innerHTML = '';
+
+            const cities = [
+                { city: "Mersin", temp: "18°C", condition: "Güneşli", icon: "fas fa-sun" },
+                { city: "Niğde", temp: "5°C", condition: "Karlı", icon: "fas fa-snowflake" },
+                { city: "Bodrum", temp: "20°C", condition: "Rüzgarlı", icon: "fas fa-wind" }
+            ];
+
+            cities.forEach(city => {
+                const card = document.createElement('div');
+                card.className = 'weather-card';
+                card.innerHTML = `
+                    <div class="weather-city">${city.city}</div>
+                    <i class="${city.icon} weather-icon"></i>
+                    <div class="weather-temp">${city.temp}</div>
+                    <div class="weather-condition">${city.condition}</div>
+                `;
+                grid.appendChild(card);
+            });
+
+            if (!document.getElementById('hava-grid')) {
+                document.getElementById('content').appendChild(grid);
+            }
         }
 
         function initSearch() {
