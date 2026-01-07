@@ -146,7 +146,7 @@
             inset: auto 20px 16px auto;
         }
 
-        /* Borsa Bölümü */
+        /* Borsa Bölümü - Düzeltildi */
         .borsa-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -157,26 +157,30 @@
         .borsa-card {
             background: #181818;
             border-radius: 18px;
-            padding: 16px;
+            padding: 20px;
             display: flex;
-            align-items: center;
+            flex-direction: column;
+            justify-content: space-between;
             cursor: pointer;
             transition: 0.4s;
             border: 1px solid var(--border);
             box-shadow: var(--shadow);
+            height: 120px;
             position: relative;
         }
         .borsa-card:hover {
             transform: translateY(-8px) scale(1.03);
             box-shadow: 0 20px 40px rgba(0,0,0,0.7);
         }
-        .borsa-name { font-size: 1.1em; font-weight: 600; flex: 1; }
+        .borsa-name {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
         .borsa-price {
-            font-size: 1.3em;
+            font-size: 1.8em;
             font-weight: 700;
-            color: var(--secondary);
-            position: absolute;
-            inset: auto 20px 16px auto;
+            align-self: flex-end;
         }
 
         .chart-container {
@@ -227,7 +231,7 @@
     </main>
 
     <script>
-        // Çince + Rusça Matrix yağmuru (önceki hali)
+        // Çince + Rusça Matrix yağmuru
         const c = document.getElementById('matrix');
         const ctx = c.getContext('2d');
         c.width = innerWidth;
@@ -381,7 +385,7 @@
                 { name: 'Dolar', value: borsaData.usd, symbol: 'usd' },
                 { name: 'Euro', value: borsaData.eur, symbol: 'eur' },
                 { name: 'Altın (Gram)', value: borsaData.gold, symbol: 'gold' },
-                { name: 'BIST 100', value: borsaData.bist100.value, change: borsaData.bist100.change, symbol: 'bist100' }
+                { name: 'BIST 100', value: borsaData.bist100.value, symbol: 'bist100' }
             ];
 
             items.forEach(item => {
@@ -390,7 +394,7 @@
                 card.onclick = () => selectStock(item.symbol);
                 card.innerHTML = `
                     <div class="borsa-name">${item.name}</div>
-                    <div class="borsa-price">${item.value} ${item.change !== undefined ? '' : '₺'}</div>
+                    <div class="borsa-price">${item.value}</div>
                 `;
                 grid.appendChild(card);
             });
