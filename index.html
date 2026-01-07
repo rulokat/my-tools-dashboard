@@ -86,35 +86,67 @@
         }
 
         main { padding: 100px 40px 40px; }
-        h1 { font-size: 2.2em; text-align: center; margin-bottom: 20px; } /* boşluk azaltıldı */
+        h1 { font-size: 2.2em; text-align: center; margin-bottom: 30px; }
 
-        /* Ticker Tabela - En Üstte, Başlık Altında */
-        .ticker-wrapper {
-            background: #000;
-            overflow: hidden;
-            padding: 12px 0;
-            margin: 0 0 40px 0; /* üst boşluk yok */
-            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+        #search-box {
+            max-width: 800px;
+            margin: 0 auto 50px;
         }
-        .ticker {
+        #search {
+            width: 100%;
+            padding: 20px 28px;
+            font-size: 1.3em;
+            border-radius: 20px;
+            border: none;
+            background: var(--card);
+            color: var(--text);
+            box-shadow: inset 0 5px 15px rgba(0,0,0,0.7);
+            outline: none;
+            transition: 0.3s;
+        }
+        #search:focus {
+            box-shadow: inset 0 5px 20px rgba(0,0,0,0.8), 0 0 0 5px rgba(0,255,65,0.3);
+            transform: scale(1.02);
+        }
+
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .card {
+            background: #181818;
+            border-radius: 18px;
+            padding: 16px;
             display: flex;
-            white-space: nowrap;
-            animation: scroll 80s linear infinite;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.4s;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            position: relative;
         }
-        .ticker-item {
-            margin: 0 50px;
-            font-family: 'Courier New', monospace;
-            font-size: 1.5em;
-            font-weight: bold;
+        .card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.7);
         }
-        .ticker-symbol { color: var(--text); margin-right: 16px; }
-        .ticker-price { color: var(--text); margin-right: 16px; }
-        .ticker-change.up { color: var(--up); }
-        .ticker-change.down { color: var(--down); }
-
-        @keyframes scroll {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
+        .favicon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            margin-right: 16px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+        }
+        .info { flex: 1; }
+        .name { font-size: 1.1em; font-weight: 600; }
+        .ping {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--secondary);
+            position: absolute;
+            inset: auto 20px 16px auto;
         }
 
         /* Borsa Bölümü */
@@ -164,12 +196,63 @@
         }
         .chart-title { font-size: 1.4em; text-align: center; margin-bottom: 20px; color: var(--text); }
 
+        /* Ticker Tabela - En Üstte */
+        .ticker-wrapper {
+            background: #000;
+            overflow: hidden;
+            padding: 12px 0;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+        }
+        .ticker {
+            display: flex;
+            white-space: nowrap;
+            animation: scroll 80s linear infinite;
+        }
+        .ticker-item {
+            margin: 0 50px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .ticker-symbol { color: var(--text); margin-right: 16px; }
+        .ticker-price { color: var(--text); margin-right: 16px; }
+        .ticker-change.up { color: var(--up); }
+        .ticker-change.down { color: var(--down); }
+
+        @keyframes scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
         .update {
             text-align: center;
             margin-top: 60px;
             color: var(--secondary);
             font-size: 1.1em;
         }
+
+        /* Hava Durumu */
+        .weather-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .weather-card {
+            background: #181818;
+            border-radius: 18px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: 0.4s;
+        }
+        .weather-card:hover { transform: translateY(-8px); }
+        .weather-city { font-size: 1.4em; font-weight: 600; margin-bottom: 12px; }
+        .weather-temp { font-size: 2.5em; font-weight: 700; margin: 16px 0; }
+        .weather-condition { font-size: 1.2em; color: var(--secondary); margin-bottom: 8px; }
+        .weather-icon { font-size: 4em; color: #00ff41; margin: 16px 0; }
     </style>
 </head>
 <body>
@@ -243,7 +326,7 @@
         let currentChart = null;
         let selectedStock = 'bist100';
 
-        const chartData = {
+        const candleData = {
             bist100: [
                 { x: '2026-01-01', o: 10750, h: 10850, l: 10720, c: 10845 },
                 { x: '2026-01-02', o: 10845, h: 10880, l: 10810, c: 10820 },
@@ -369,6 +452,7 @@
                 if (document.querySelector('nav li.active')?.dataset.sec === 'borsa') {
                     renderBorsaCards();
                     startTicker();
+                    renderCandleChart('bist100');
                 }
                 updateTime();
             } catch (e) {
