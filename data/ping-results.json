@@ -1,335 +1,76 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rulo-Archive</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        :root {
-            --bg: #0a0a0a;
-            --card: #111111;
-            --text: #e0e0e0;
-            --secondary: #aaaaaa;
-            --border: #333333;
-            --accent: #1a1a1a;
-            --online: #00ff41;
-            --offline: #ff4444;
-            --shadow: 0 8px 20px rgba(0,0,0,0.6);
-        }
-        * { box-sizing: border-box; margin:0; padding:0; }
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        #matrix { position:fixed; inset:0; pointer-events:none; z-index:-1; opacity:0.18; }
-        canvas { display:block; }
-
-        #menu-btn {
-            position: fixed;
-            inset: 20px auto auto 20px;
-            width: 50px; height: 50px;
-            background: var(--card);
-            border-radius: 14px;
-            display: grid;
-            place-items: center;
-            cursor: pointer;
-            z-index: 1000;
-            box-shadow: var(--shadow);
-            transition: 0.3s;
-        }
-        #menu-btn:hover { transform: scale(1.08); background: var(--accent); }
-
-        nav {
-            position: fixed;
-            inset: 0 auto 0 -260px;
-            width: 260px;
-            background: #0e0e0e;
-            padding: 90px 20px 20px;
-            border-right: 1px solid var(--border);
-            transition: inset-left 0.4s ease;
-            z-index: 999;
-            box-shadow: 0 0 30px rgba(0,0,0,0.8);
-        }
-        nav.open { inset-left: 0; }
-
-        nav h2 { margin-bottom: 40px; font-size: 1.5em; text-align: center; }
-        nav ul { list-style: none; }
-        nav li {
-            padding: 16px 20px;
-            border-radius: 14px;
-            margin-bottom: 10px;
-            font-size: 1.1em;
-            display: flex;
-            align-items: center;
-            background: var(--accent);
-            box-shadow: inset 0 3px 10px rgba(0,0,0,0.5);
-            transition: 0.3s;
-            cursor: pointer;
-        }
-        nav li i { margin-right: 14px; font-size: 1.3em; width: 28px; text-align: center; }
-        nav li:hover, nav li.active {
-            background: #222;
-            transform: translateY(-2px);
-            box-shadow: inset 0 5px 15px rgba(0,0,0,0.7), 0 10px 25px rgba(0,0,0,0.6);
-        }
-
-        main { padding: 100px 40px 40px; }
-        h1 { font-size: 2.2em; text-align: center; margin-bottom: 50px; }
-
-        #search-box {
-            max-width: 800px;
-            margin: 0 auto 50px;
-        }
-        #search {
-            width: 100%;
-            padding: 20px 28px;
-            font-size: 1.3em;
-            border-radius: 20px;
-            border: none;
-            background: var(--card);
-            color: var(--text);
-            box-shadow: inset 0 5px 15px rgba(0,0,0,0.7);
-            outline: none;
-            transition: 0.3s;
-        }
-        #search:focus {
-            box-shadow: inset 0 5px 20px rgba(0,0,0,0.8), 0 0 0 5px rgba(0,255,65,0.3);
-            transform: scale(1.02);
-        }
-
-        #grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 28px;
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-        .card {
-            background: #181818;
-            border-radius: 22px;
-            padding: 24px;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            transition: 0.4s;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
-        }
-        .card:hover {
-            transform: translateY(-12px) scale(1.05);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
-        }
-        .favicon {
-            width: 70px;
-            height: 70px;
-            border-radius: 18px;
-            margin-right: 24px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-        }
-        .status {
-            position: absolute;
-            inset: 18px auto auto 18px;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            border: 4px solid #000;
-        }
-        .online .status { background: var(--online); box-shadow: 0 0 20px rgba(0,255,65,0.8); }
-        .offline .status { background: var(--offline); box-shadow: 0 0 15px rgba(255,68,68,0.6); }
-        .info { flex: 1; }
-        .name { font-size: 1.5em; font-weight: 700; }
-        .ping {
-            font-size: 2em;
-            font-weight: 800;
-            color: var(--secondary);
-            position: absolute;
-            inset: auto 28px 24px auto;
-        }
-        .update {
-            text-align: center;
-            margin-top: 60px;
-            color: var(--secondary);
-            font-size: 1.1em;
-        }
-    </style>
-</head>
-<body>
-    <canvas id="matrix"></canvas>
-
-    <div id="menu-btn"><i class="fas fa-bars"></i></div>
-
-    <nav id="sidebar">
-        <h2>Rulo-Archive</h2>
-        <ul>
-            <li class="active" data-sec="home"><i class="fas fa-home"></i> Ana</li>
-            <li data-sec="ping"><i class="fas fa-globe"></i> Tüm Siteler</li>
-            <li data-sec="borsa"><i class="fas fa-chart-line"></i> Borsa</li>
-            <li data-sec="hava"><i class="fas fa-cloud-sun"></i> Hava</li>
-            <li data-sec="diger"><i class="fas fa-tools"></i> Diğer</li>
-        </ul>
-    </nav>
-
-    <main>
-        <h1 id="title">Rulo-Archive</h1>
-        <div id="content">
-            <div id="search-box">
-                <input id="search" placeholder="Site veya etiket ara..." autocomplete="off">
-            </div>
-            <div id="grid"></div>
-        </div>
-        <div id="update" class="update"></div>
-    </main>
-
-    <script>
-        // Matrix yağmuru
-        const c = document.getElementById('matrix');
-        const ctx = c.getContext('2d');
-        c.width = innerWidth;
-        c.height = innerHeight;
-
-        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}".split("");
-        const font = 14;
-        const cols = c.width / font;
-        const drops = Array(Math.floor(cols)).fill(1);
-
-        function rain() {
-            ctx.fillStyle = 'rgba(10,10,10,0.05)';
-            ctx.fillRect(0,0,c.width,c.height);
-            ctx.fillStyle = '#00ff41';
-            ctx.font = font + 'px monospace';
-
-            drops.forEach((y,i) => {
-                const text = chars[Math.floor(Math.random() * chars.length)];
-                ctx.fillText(text, i*font, y*font);
-                if (y*font > c.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++;
-            });
-        }
-        setInterval(rain, 35);
-        addEventListener('resize', () => {
-            c.width = innerWidth;
-            c.height = innerHeight;
-        });
-
-        // Menü
-        const toggle = () => document.getElementById('sidebar').classList.toggle('open');
-        document.getElementById('menu-btn').onclick = toggle;
-
-        const JSON_URL = "https://raw.githubusercontent.com/rulokat/my-tools-dashboard/main/data/ping-results.json";
-        let allSites = [];
-        let lastUpdate = null;
-
-        // Menü tıklama
-        document.querySelectorAll('nav li').forEach(li => {
-            li.onclick = () => {
-                document.querySelectorAll('nav li').forEach(l => l.classList.remove('active'));
-                li.classList.add('active');
-
-                const sec = li.dataset.sec;
-                document.getElementById('title').textContent = sec === 'home' ? 'Rulo-Archive' : li.textContent.trim();
-
-                if (sec === 'home') {
-                    document.getElementById('content').innerHTML = `
-                        <div id="search-box">
-                            <input id="search" placeholder="Site veya etiket ara..." autocomplete="off">
-                        </div>
-                        <div id="grid"></div>
-                    `;
-                    initSearch();
-                    showSites([]);
-                } else if (sec === 'ping') {
-                    document.getElementById('content').innerHTML = `<div id="grid"></div>`;
-                    showSites(allSites);
-                    updateTime();
-                } else {
-                    document.getElementById('content').innerHTML = '<p style="text-align:center; color:#888; font-size:1.4em; margin-top:120px;">Yakında eklenecek...</p>';
-                    document.getElementById('update').textContent = '';
-                }
-            };
-        });
-
-        async function fetchData() {
-            try {
-                const res = await fetch(JSON_URL + '?t=' + Date.now());
-                const data = await res.json();
-                lastUpdate = new Date(data.lastUpdate);
-
-                allSites = data.data.map(s => ({
-                    ...s,
-                    cleanName: s.site
-                        .replace(/^www\./, '')
-                        .replace(/\.(com|org|net|io|co|edu|gov|tv|me|app)$/, '')
-                        .split('.')
-                        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-                        .join(' '),
-                    tags: s.tags || []
-                }));
-
-                if (document.querySelector('nav li.active')?.dataset.sec === 'ping') {
-                    showSites(allSites);
-                }
-                updateTime();
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        function updateTime() {
-            if (!lastUpdate) return;
-            const diff = Math.floor((Date.now() - lastUpdate) / 60000);
-            document.getElementById('update').textContent = 
-                `Son güncelleme: ${diff === 0 ? 'az önce' : diff + ' dk önce'}`;
-        }
-
-        function showSites(sites) {
-            const grid = document.getElementById('grid');
-            if (!grid) return;
-            grid.innerHTML = '';
-
-            sites.forEach(s => {
-                const card = document.createElement('div');
-                card.className = `card ${s.online ? 'online' : 'offline'}`;
-                card.onclick = () => open('https://' + s.site, '_blank');
-
-                card.innerHTML = `
-                    <div class="status"></div>
-                    <img src="https://www.google.com/s2/favicons?domain=${s.site}&sz=128" class="favicon">
-                    <div class="info">
-                        <div class="name">${s.cleanName}</div>
-                    </div>
-                    <div class="ping">${s.latency >= 0 ? s.latency + ' ms' : 'Timeout'}</div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function initSearch() {
-            const input = document.getElementById('search');
-            if (!input) return;
-
-            input.oninput = () => {
-                const q = input.value.toLowerCase().trim();
-                if (!q) return showSites([]);
-
-                const filtered = allSites.filter(s =>
-                    s.site.toLowerCase().includes(q) ||
-                    s.cleanName.toLowerCase().includes(q) ||
-                    s.tags.some(t => t.toLowerCase().includes(q))
-                );
-
-                showSites(filtered);
-            };
-        }
-
-        fetchData();
-        setInterval(fetchData, 30000);
-        document.addEventListener('DOMContentLoaded', initSearch);
-    </script>
-</body>
-</html>
+{
+  "lastUpdate": "2026-01-07T00:05:20.550Z",
+  "totalSites": 10,
+  "data": [
+    {
+      "site": "google.com",
+      "latency": 335,
+      "status": 204,
+      "online": true,
+      "timestamp": "2026-01-07T00:05:18.810Z"
+    },
+    {
+      "site": "youtube.com",
+      "latency": 187,
+      "status": 200,
+      "online": true,
+      "timestamp": "2026-01-07T00:05:18.997Z"
+    },
+    {
+      "site": "github.com",
+      "latency": 16,
+      "status": 200,
+      "online": true,
+      "timestamp": "2026-01-07T00:05:19.013Z"
+    },
+    {
+      "site": "cloudflare.com",
+      "latency": 209,
+      "status": 200,
+      "online": true,
+      "timestamp": "2026-01-07T00:05:19.222Z"
+    },
+    {
+      "site": "twitter.com",
+      "latency": 144,
+      "status": 403,
+      "online": true,
+      "timestamp": "2026-01-07T00:05:19.366Z"
+    },
+    {
+      "site": "instagram.com",
+      "latency": 320,
+      "status": 200,
+      "online": true,
+      "timestamp": "2026-01-07T00:05:19.686Z"
+    },
+    {
+      "site": "wikipedia.org",
+      "latency": 50,
+      "status": 403,
+      "online": true,
+      "timestamp": "2026-01-07T00:05:19.736Z"
+    },
+    {
+      "site": "amazon.com",
+      "latency": 673,
+      "status": 200,
+      "online": true,
+      "timestamp": "2026-01-07T00:05:20.409Z"
+    },
+    {
+      "site": "reddit.com",
+      "latency": 17,
+      "status": 403,
+      "online": true,
+      "timestamp": "2026-01-07T00:05:20.426Z"
+    },
+    {
+      "site": "netflix.com",
+      "latency": 124,
+      "status": 405,
+      "online": true,
+      "timestamp": "2026-01-07T00:05:20.550Z"
+    }
+  ]
+}
