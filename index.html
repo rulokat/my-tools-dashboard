@@ -146,7 +146,7 @@
             inset: auto 20px 16px auto;
         }
 
-        /* Borsa Bölümü - Düzeltildi */
+        /* Borsa Bölümü */
         .borsa-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -192,6 +192,35 @@
             box-shadow: var(--shadow);
         }
         .chart-title { font-size: 1.4em; text-align: center; margin-bottom: 20px; color: var(--text); }
+
+        /* Ticker Tabela */
+        .ticker-wrapper {
+            background: #000;
+            overflow: hidden;
+            padding: 12px 0;
+            margin-top: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+        }
+        .ticker {
+            display: flex;
+            white-space: nowrap;
+            animation: scroll 60s linear infinite;
+        }
+        .ticker-item {
+            margin: 0 40px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+        .ticker-symbol { color: var(--text); margin-right: 12px; }
+        .ticker-price { color: var(--text); margin-right: 12px; }
+        .ticker-change.up { color: var(--up); }
+        .ticker-change.down { color: var(--down); }
+
+        @keyframes scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
 
         .update {
             text-align: center;
@@ -309,9 +338,13 @@
                             <div class="chart-title" id="chart-title">BIST 100</div>
                             <canvas id="stock-chart"></canvas>
                         </div>
+                        <div class="ticker-wrapper">
+                            <div class="ticker" id="ticker"></div>
+                        </div>
                     `;
                     renderBorsaCards();
                     renderChart('bist100');
+                    startTicker();
                     updateTime();
                 } else {
                     document.getElementById('content').innerHTML = '<p style="text-align:center; color:#888; font-size:1.4em; margin-top:120px;">Yakında eklenecek...</p>';
@@ -341,6 +374,7 @@
 
                 if (document.querySelector('nav li.active')?.dataset.sec === 'borsa') {
                     renderBorsaCards();
+                    startTicker();
                 }
                 updateTime();
             } catch (e) {
@@ -385,7 +419,7 @@
                 { name: 'Dolar', value: borsaData.usd, symbol: 'usd' },
                 { name: 'Euro', value: borsaData.eur, symbol: 'eur' },
                 { name: 'Altın (Gram)', value: borsaData.gold, symbol: 'gold' },
-                { name: 'BIST 100', value: borsaData.bist100.value, symbol: 'bist100' }
+                { name: 'BIST 100', value: borsaData.bist100.value, change: borsaData.bist100.change, symbol: 'bist100' }
             ];
 
             items.forEach(item => {
@@ -448,6 +482,34 @@
                         y: { grid: { color: '#333' }, ticks: { color: '#aaaaaa' } }
                     }
                 }
+            });
+        }
+
+        function startTicker() {
+            if (!borsaData) return;
+            const ticker = document.getElementById('ticker');
+            ticker.innerHTML = '';
+
+            const allItems = [
+                { symbol: 'USD/TRY', price: borsaData.usd, change: 0 },
+                { symbol: 'EUR/TRY', price: borsaData.eur, change: 0 },
+                { symbol: 'ALTIN', price: borsaData.gold, change: 0 },
+                { symbol: 'BIST100', price: borsaData.bist100.value, change: borsaData.bist100.change },
+                ...borsaData.stocks
+            ];
+
+            allItems.forEach(item => {
+                const span = document.createElement('span');
+                span.className = 'ticker-item';
+                span.innerHTML = `
+                    <span class="ticker-symbol">${item.symbol || item.name}</span>
+                    <span class="ticker-price">${item.price || item.value}</span>
+                    <span class="ticker-change ${item.change >= 0 ? 'up' : 'down'}">
+                        ${item.change >= 0 ? '+' : ''}${item.change?.toFixed(2) || ''}%
+                    </span>
+                `;
+                ticker.appendChild(span);
+                ticker.appendChild(span.cloneNode(true)); // Akışı kesintisiz yapmak için kopyala
             });
         }
 
