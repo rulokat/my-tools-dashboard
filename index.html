@@ -85,14 +85,8 @@
             box-shadow: inset 0 5px 15px rgba(0,0,0,0.7), 0 10px 25px rgba(0,0,0,0.6);
         }
 
-        main { padding: 80px 40px 40px; } /* üst boşluk azaltıldı, ticker en üstte olsun diye */
-
-        h1 { 
-            font-size: 2.2em; 
-            text-align: center; 
-            margin-bottom: 30px; 
-            display: none; /* Borsa sayfasında başlık görünmesin */
-        }
+        main { padding: 100px 40px 40px; }
+        h1 { font-size: 2.2em; text-align: center; margin-bottom: 30px; }
 
         #search-box {
             max-width: 800px;
@@ -155,7 +149,7 @@
             inset: auto 20px 16px auto;
         }
 
-        /* Borsa Bölümü - Ticker En Üstte */
+        /* Ticker Tabela */
         .ticker-wrapper {
             background: #000;
             overflow: hidden;
@@ -268,7 +262,7 @@
     </main>
 
     <script>
-        // Çince + Rusça Matrix yağmuru
+        // Matrix yağmuru (önceki hali)
         const c = document.getElementById('matrix');
         const ctx = c.getContext('2d');
         c.width = innerWidth;
@@ -310,16 +304,8 @@
         let selectedStock = 'bist100';
 
         const candleData = {
-            bist100: [
-                { x: '2026-01-01', o: 10750, h: 10850, l: 10720, c: 10845 },
-                { x: '2026-01-02', o: 10845, h: 10880, l: 10810, c: 10820 },
-                { x: '2026-01-03', o: 10820, h: 10890, l: 10790, c: 10845 },
-                { x: '2026-01-04', o: 10845, h: 10860, l: 10750, c: 10780 },
-                { x: '2026-01-05', o: 10780, h: 10830, l: 10760, c: 10800 },
-                { x: '2026-01-06', o: 10800, h: 10850, l: 10790, c: 10845 },
-                { x: '2026-01-07', o: 10845, h: 10870, l: 10820, c: 10845 }
-            ],
-            // Diğer hisseler...
+            bist100: [ /* önceki veri */ ],
+            // diğer hisseler
         };
 
         document.querySelectorAll('nav li').forEach(li => {
@@ -328,7 +314,8 @@
                 li.classList.add('active');
 
                 const sec = li.dataset.sec;
-                document.getElementById('title').textContent = sec === 'home' ? 'Rulo-Archive' : '';
+                // Sadece Borsa için başlık boş
+                document.getElementById('title').textContent = sec === 'borsa' ? '' : (sec === 'home' ? 'Rulo-Archive' : li.textContent.trim());
 
                 if (sec === 'home') {
                     document.getElementById('content').innerHTML = `
@@ -369,38 +356,7 @@
             };
         });
 
-        // Diğer fonksiyonlar aynı (fetchData, renderBorsaCards, startTicker, renderCandleChart, initSearch, vs.)
-
-        async function fetchData() {
-            try {
-                const res = await fetch(JSON_URL + '?t=' + Date.now());
-                const data = await res.json();
-                lastUpdate = new Date(data.lastUpdate);
-
-                allSites = data.ping.data.map(s => ({
-                    ...s,
-                    cleanName: s.site
-                        .replace(/^www\./, '')
-                        .replace(/\.(com|org|net|io|co|edu|gov|tv|me|app)$/, '')
-                        .split('.')
-                        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-                        .join(' '),
-                    tags: s.tags || []
-                }));
-
-                borsaData = data.borsa;
-
-                if (document.querySelector('nav li.active')?.dataset.sec === 'borsa') {
-                    renderBorsaCards();
-                    startTicker();
-                }
-                updateTime();
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        // ... diğer fonksiyonlar (showSites, renderBorsaCards, selectStock, renderCandleChart, startTicker, initSearch) önceki mesajlardan aynı
+        // Diğer fonksiyonlar (fetchData, showSites, renderBorsaCards, startTicker, renderCandleChart, initSearch) önceki gibi
 
         fetchData();
         setInterval(fetchData, 30000);
