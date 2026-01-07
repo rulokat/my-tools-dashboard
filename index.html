@@ -86,67 +86,35 @@
         }
 
         main { padding: 100px 40px 40px; }
-        h1 { font-size: 2.2em; text-align: center; margin-bottom: 50px; }
+        h1 { font-size: 2.2em; text-align: center; margin-bottom: 20px; } /* boşluk azaltıldı */
 
-        #search-box {
-            max-width: 800px;
-            margin: 0 auto 50px;
+        /* Ticker Tabela - En Üstte, Başlık Altında */
+        .ticker-wrapper {
+            background: #000;
+            overflow: hidden;
+            padding: 12px 0;
+            margin: 0 0 40px 0; /* üst boşluk yok */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
         }
-        #search {
-            width: 100%;
-            padding: 20px 28px;
-            font-size: 1.3em;
-            border-radius: 20px;
-            border: none;
-            background: var(--card);
-            color: var(--text);
-            box-shadow: inset 0 5px 15px rgba(0,0,0,0.7);
-            outline: none;
-            transition: 0.3s;
-        }
-        #search:focus {
-            box-shadow: inset 0 5px 20px rgba(0,0,0,0.8), 0 0 0 5px rgba(0,255,65,0.3);
-            transform: scale(1.02);
-        }
-
-        #grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 24px;
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-        .card {
-            background: #181818;
-            border-radius: 18px;
-            padding: 16px;
+        .ticker {
             display: flex;
-            align-items: center;
-            cursor: pointer;
-            transition: 0.4s;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
-            position: relative;
+            white-space: nowrap;
+            animation: scroll 80s linear infinite;
         }
-        .card:hover {
-            transform: translateY(-8px) scale(1.03);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+        .ticker-item {
+            margin: 0 50px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.5em;
+            font-weight: bold;
         }
-        .favicon {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            margin-right: 16px;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
-        }
-        .info { flex: 1; }
-        .name { font-size: 1.1em; font-weight: 600; }
-        .ping {
-            font-size: 1.3em;
-            font-weight: 700;
-            color: var(--secondary);
-            position: absolute;
-            inset: auto 20px 16px auto;
+        .ticker-symbol { color: var(--text); margin-right: 16px; }
+        .ticker-price { color: var(--text); margin-right: 16px; }
+        .ticker-change.up { color: var(--up); }
+        .ticker-change.down { color: var(--down); }
+
+        @keyframes scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
         }
 
         /* Borsa Bölümü */
@@ -196,63 +164,12 @@
         }
         .chart-title { font-size: 1.4em; text-align: center; margin-bottom: 20px; color: var(--text); }
 
-        /* Ticker Tabela - En Üstte */
-        .ticker-wrapper {
-            background: #000;
-            overflow: hidden;
-            padding: 12px 0;
-            margin-bottom: 40px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
-        }
-        .ticker {
-            display: flex;
-            white-space: nowrap;
-            animation: scroll 80s linear infinite;
-        }
-        .ticker-item {
-            margin: 0 50px;
-            font-family: 'Courier New', monospace;
-            font-size: 1.5em;
-            font-weight: bold;
-        }
-        .ticker-symbol { color: var(--text); margin-right: 16px; }
-        .ticker-price { color: var(--text); margin-right: 16px; }
-        .ticker-change.up { color: var(--up); }
-        .ticker-change.down { color: var(--down); }
-
-        @keyframes scroll {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
-
         .update {
             text-align: center;
             margin-top: 60px;
             color: var(--secondary);
             font-size: 1.1em;
         }
-
-        /* Hava Durumu */
-        .weather-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 24px;
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-        .weather-card {
-            background: #181818;
-            border-radius: 18px;
-            padding: 24px;
-            text-align: center;
-            box-shadow: var(--shadow);
-            transition: 0.4s;
-        }
-        .weather-card:hover { transform: translateY(-8px); }
-        .weather-city { font-size: 1.4em; font-weight: 600; margin-bottom: 12px; }
-        .weather-temp { font-size: 2.5em; font-weight: 700; margin: 16px 0; }
-        .weather-condition { font-size: 1.2em; color: var(--secondary); margin-bottom: 8px; }
-        .weather-icon { font-size: 4em; color: #00ff41; margin: 16px 0; }
     </style>
 </head>
 <body>
@@ -326,8 +243,7 @@
         let currentChart = null;
         let selectedStock = 'bist100';
 
-        // Mum grafik için örnek veri (her hisse için haftalık OHLC)
-        const candleData = {
+        const chartData = {
             bist100: [
                 { x: '2026-01-01', o: 10750, h: 10850, l: 10720, c: 10845 },
                 { x: '2026-01-02', o: 10845, h: 10880, l: 10810, c: 10820 },
@@ -346,7 +262,42 @@
                 { x: '2026-01-06', o: 295, h: 296, l: 294, c: 295 },
                 { x: '2026-01-07', o: 295, h: 296, l: 294, c: 295 }
             ],
-            // Diğer hisseler için de benzer veri ekleyebilirsin
+            GARAN: [
+                { x: '2026-01-01', o: 110, h: 112, l: 109, c: 112 },
+                { x: '2026-01-02', o: 112, h: 113, l: 111, c: 112.4 },
+                { x: '2026-01-03', o: 112.4, h: 113, l: 112, c: 112 },
+                { x: '2026-01-04', o: 112, h: 112.5, l: 111.5, c: 112 },
+                { x: '2026-01-05', o: 112, h: 112.5, l: 111.5, c: 112 },
+                { x: '2026-01-06', o: 112, h: 112.5, l: 111.5, c: 112 },
+                { x: '2026-01-07', o: 112, h: 112.5, l: 111.5, c: 112 }
+            ],
+            AKBNK: [
+                { x: '2026-01-01', o: 67, h: 68.5, l: 66.5, c: 68 },
+                { x: '2026-01-02', o: 68, h: 68.5, l: 67.5, c: 68.2 },
+                { x: '2026-01-03', o: 68.2, h: 68.5, l: 68, c: 68 },
+                { x: '2026-01-04', o: 68, h: 68.5, l: 67.8, c: 68 },
+                { x: '2026-01-05', o: 68, h: 68.5, l: 67.8, c: 68 },
+                { x: '2026-01-06', o: 68, h: 68.5, l: 67.8, c: 68 },
+                { x: '2026-01-07', o: 68, h: 68.5, l: 67.8, c: 68 }
+            ],
+            EREGL: [
+                { x: '2026-01-01', o: 47, h: 49, l: 46.5, c: 48.9 },
+                { x: '2026-01-02', o: 48.9, h: 49.5, l: 48.5, c: 49 },
+                { x: '2026-01-03', o: 49, h: 49.5, l: 48.5, c: 49 },
+                { x: '2026-01-04', o: 49, h: 49.5, l: 48.5, c: 49 },
+                { x: '2026-01-05', o: 49, h: 49.5, l: 48.5, c: 49 },
+                { x: '2026-01-06', o: 49, h: 49.5, l: 48.5, c: 49 },
+                { x: '2026-01-07', o: 49, h: 49.5, l: 48.5, c: 49 }
+            ],
+            SISE: [
+                { x: '2026-01-01', o: 47.5, h: 48.5, l: 47, c: 48.15 },
+                { x: '2026-01-02', o: 48.15, h: 48.5, l: 48, c: 48 },
+                { x: '2026-01-03', o: 48, h: 48.5, l: 47.8, c: 48 },
+                { x: '2026-01-04', o: 48, h: 48.5, l: 47.8, c: 48 },
+                { x: '2026-01-05', o: 48, h: 48.5, l: 47.8, c: 48 },
+                { x: '2026-01-06', o: 48, h: 48.5, l: 47.8, c: 48 },
+                { x: '2026-01-07', o: 48, h: 48.5, l: 47.8, c: 48 }
+            ]
         };
 
         document.querySelectorAll('nav li').forEach(li => {
@@ -549,7 +500,7 @@
                     </span>
                 `;
                 ticker.appendChild(span);
-                ticker.appendChild(span.cloneNode(true)); // Kesintisiz akış için
+                ticker.appendChild(span.cloneNode(true));
             });
         }
 
