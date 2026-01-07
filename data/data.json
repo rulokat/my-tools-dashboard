@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2026-01-07T20:15:18.584Z",
+  "lastUpdate": "2026-01-07T20:20:20.009Z",
   "ping": {
     "totalSites": 10,
     "data": [
@@ -12,10 +12,10 @@
           "google",
           "information"
         ],
-        "latency": 1,
+        "latency": 2,
         "status": 403,
         "online": true,
-        "timestamp": "2026-01-07T20:15:17.937Z"
+        "timestamp": "2026-01-07T20:20:18.342Z"
       },
       {
         "site": "youtube.com",
@@ -26,10 +26,10 @@
           "google",
           "music"
         ],
-        "latency": 2,
+        "latency": 1,
         "status": 403,
         "online": true,
-        "timestamp": "2026-01-07T20:15:17.939Z"
+        "timestamp": "2026-01-07T20:20:18.343Z"
       },
       {
         "site": "github.com",
@@ -43,7 +43,7 @@
         "latency": 1,
         "status": 403,
         "online": true,
-        "timestamp": "2026-01-07T20:15:17.940Z"
+        "timestamp": "2026-01-07T20:20:18.344Z"
       },
       {
         "site": "cloudflare.com",
@@ -54,10 +54,10 @@
           "hosting",
           "dns"
         ],
-        "latency": 2,
+        "latency": 1,
         "status": 403,
         "online": true,
-        "timestamp": "2026-01-07T20:15:17.942Z"
+        "timestamp": "2026-01-07T20:20:18.345Z"
       },
       {
         "site": "twitter.com",
@@ -71,7 +71,7 @@
         "latency": 1,
         "status": 403,
         "online": true,
-        "timestamp": "2026-01-07T20:15:17.943Z"
+        "timestamp": "2026-01-07T20:20:18.346Z"
       },
       {
         "site": "instagram.com",
@@ -82,10 +82,10 @@
           "meta",
           "sharing"
         ],
-        "latency": 1,
+        "latency": 2,
         "status": 403,
         "online": true,
-        "timestamp": "2026-01-07T20:15:17.944Z"
+        "timestamp": "2026-01-07T20:20:18.348Z"
       },
       {
         "site": "wikipedia.org",
@@ -99,7 +99,7 @@
         "latency": 1,
         "status": 403,
         "online": true,
-        "timestamp": "2026-01-07T20:15:17.945Z"
+        "timestamp": "2026-01-07T20:20:18.349Z"
       },
       {
         "site": "amazon.com",
@@ -113,7 +113,7 @@
         "latency": 1,
         "status": 403,
         "online": true,
-        "timestamp": "2026-01-07T20:15:17.946Z"
+        "timestamp": "2026-01-07T20:20:18.350Z"
       },
       {
         "site": "reddit.com",
@@ -127,7 +127,7 @@
         "latency": 1,
         "status": 403,
         "online": true,
-        "timestamp": "2026-01-07T20:15:17.947Z"
+        "timestamp": "2026-01-07T20:20:18.351Z"
       },
       {
         "site": "netflix.com",
@@ -141,7 +141,7 @@
         "latency": 1,
         "status": 403,
         "online": true,
-        "timestamp": "2026-01-07T20:15:17.948Z"
+        "timestamp": "2026-01-07T20:20:18.352Z"
       }
     ]
   },
