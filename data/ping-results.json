@@ -1,76 +1,76 @@
 {
-  "lastUpdate": "2026-01-07T00:05:18.016Z",
+  "lastUpdate": "2026-01-07T00:05:20.550Z",
   "totalSites": 10,
   "data": [
     {
       "site": "google.com",
-      "latency": 392,
+      "latency": 335,
       "status": 204,
       "online": true,
-      "timestamp": "2026-01-07T00:05:16.513Z"
+      "timestamp": "2026-01-07T00:05:18.810Z"
     },
     {
       "site": "youtube.com",
-      "latency": 509,
+      "latency": 187,
       "status": 200,
       "online": true,
-      "timestamp": "2026-01-07T00:05:17.022Z"
+      "timestamp": "2026-01-07T00:05:18.997Z"
     },
     {
       "site": "github.com",
-      "latency": 11,
+      "latency": 16,
       "status": 200,
       "online": true,
-      "timestamp": "2026-01-07T00:05:17.033Z"
+      "timestamp": "2026-01-07T00:05:19.013Z"
     },
     {
       "site": "cloudflare.com",
-      "latency": 137,
+      "latency": 209,
       "status": 200,
       "online": true,
-      "timestamp": "2026-01-07T00:05:17.170Z"
+      "timestamp": "2026-01-07T00:05:19.222Z"
     },
     {
       "site": "twitter.com",
-      "latency": 121,
+      "latency": 144,
       "status": 403,
       "online": true,
-      "timestamp": "2026-01-07T00:05:17.291Z"
+      "timestamp": "2026-01-07T00:05:19.366Z"
     },
     {
       "site": "instagram.com",
-      "latency": 274,
+      "latency": 320,
       "status": 200,
       "online": true,
-      "timestamp": "2026-01-07T00:05:17.565Z"
+      "timestamp": "2026-01-07T00:05:19.686Z"
     },
     {
       "site": "wikipedia.org",
-      "latency": 12,
+      "latency": 50,
       "status": 403,
       "online": true,
-      "timestamp": "2026-01-07T00:05:17.577Z"
+      "timestamp": "2026-01-07T00:05:19.736Z"
     },
     {
       "site": "amazon.com",
-      "latency": 380,
+      "latency": 673,
       "status": 200,
       "online": true,
-      "timestamp": "2026-01-07T00:05:17.957Z"
+      "timestamp": "2026-01-07T00:05:20.409Z"
     },
     {
       "site": "reddit.com",
-      "latency": 14,
+      "latency": 17,
       "status": 403,
       "online": true,
-      "timestamp": "2026-01-07T00:05:17.971Z"
+      "timestamp": "2026-01-07T00:05:20.426Z"
     },
     {
       "site": "netflix.com",
-      "latency": 45,
+      "latency": 124,
       "status": 405,
       "online": true,
-      "timestamp": "2026-01-07T00:05:18.016Z"
+      "timestamp": "2026-01-07T00:05:20.550Z"
     }
   ]
 }
