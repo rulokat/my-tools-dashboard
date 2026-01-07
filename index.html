@@ -11,103 +11,247 @@
             --text: #e0e0e0;
             --text-secondary: #aaaaaa;
             --border: #333333;
-            --online: #00ff00;
+            --accent: #1a1a1a;
+            --online: #00ff41;
             --offline: #ff4444;
         }
-        body { margin:0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
-        nav { width: 260px; background: #0e0e0e; padding: 20px; border-right: 1px solid var(--border); }
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            position: relative;
+        }
+        /* Teknolojik Arka Plan Animasyonu */
+        #background-animation {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.15;
+        }
+        canvas { display: block; }
+
+        /* Hamburger Menü Butonu */
+        #menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: all 0.3s;
+        }
+        #menu-toggle:hover { transform: scale(1.1); }
+        .hamburger {
+            width: 24px;
+            height: 18px;
+            position: relative;
+        }
+        .hamburger span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background: var(--text);
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+        .hamburger span:nth-child(2) { margin: 6px 0; }
+
+        /* Sol Menü (Gizli/Açılır) */
+        nav {
+            position: fixed;
+            left: -260px;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: #0e0e0e;
+            padding: 80px 20px 20px;
+            border-right: 1px solid var(--border);
+            transition: left 0.4s ease;
+            z-index: 999;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+        }
+        nav.open { left: 0; }
         nav h2 { margin: 0 0 40px; text-align: center; font-size: 1.4em; color: var(--text); }
         nav ul { list-style: none; padding: 0; }
-        nav li { padding: 14px 16px; cursor: pointer; border-radius: 12px; margin-bottom: 8px; transition: background 0.2s; font-size: 1.05em; }
-        nav li:hover, nav li.active { background: #1a1a1a; }
-        main { flex: 1; padding: 30px; }
-        h1 { font-size: 1.8em; margin-bottom: 20px; text-align: center; color: var(--text); }
-        .card { background: var(--card-bg); padding: 24px; border-radius: 16px; border: 1px solid var(--border); }
-        #search-input { width: 100%; padding: 12px; font-size: 1em; border-radius: 8px; border: 1px solid var(--border); background: #181818; color: var(--text); margin-bottom: 20px; }
-        #ping-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin-top: 20px; }
+        nav li {
+            padding: 16px;
+            cursor: pointer;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+            font-size: 1.05em;
+            background: var(--accent);
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.4), 0 4px 10px rgba(0,0,0,0.3);
+        }
+        nav li:hover, nav li.active {
+            background: #222;
+            transform: translateY(-2px);
+            box-shadow: inset 0 4px 12px rgba(0,0,0,0.6), 0 8px 20px rgba(0,0,0,0.5);
+        }
+
+        main { padding: 100px 40px 40px; min-height: 100vh; }
+        h1 { font-size: 2em; text-align: center; margin-bottom: 40px; color: var(--text); }
+
+        /* Arama Çubuğu */
+        #search-container {
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+        #search-input {
+            width: 100%;
+            padding: 18px 24px;
+            font-size: 1.2em;
+            border-radius: 16px;
+            border: none;
+            background: var(--card-bg);
+            color: var(--text);
+            box-shadow: inset 0 4px 12px rgba(0,0,0,0.6), 0 8px 20px rgba(0,0,0,0.4);
+            outline: none;
+            transition: all 0.3s;
+        }
+        #search-input:focus {
+            box-shadow: inset 0 4px 16px rgba(0,0,0,0.7), 0 0 0 4px rgba(0,255,65,0.2);
+            transform: scale(1.02);
+        }
+
+        #ping-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
         .site-card {
             background: #181818;
-            border-radius: 16px;
-            padding: 16px;
+            border-radius: 18px;
+            padding: 18px;
             display: flex;
             align-items: center;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
             position: relative;
             border: 1px solid var(--border);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.5);
         }
         .site-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-            border-color: #444;
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.7);
         }
         .site-favicon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            margin-right: 16px;
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            margin-right: 18px;
             flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
         }
         .status-indicator {
             position: absolute;
-            top: 12px;
-            left: 12px;
-            width: 12px;
-            height: 12px;
+            top: 14px;
+            left: 14px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
             background: var(--offline);
-            border: 2px solid #000;
+            border: 3px solid #000;
+            box-shadow: 0 0 10px rgba(255,68,68,0.5);
         }
-        .site-card.online .status-indicator { background: var(--online); }
+        .site-card.online .status-indicator {
+            background: var(--online);
+            box-shadow: 0 0 15px rgba(0,255,65,0.6);
+        }
         .site-info { flex: 1; }
         .site-name {
-            font-size: 1.2em;
+            font-size: 1.25em;
             font-weight: 600;
             color: var(--text);
-            margin-bottom: 4px;
         }
         .site-ping {
-            font-size: 1.3em;
+            font-size: 1.5em;
             font-weight: bold;
             color: var(--text-secondary);
             position: absolute;
-            bottom: 16px;
-            right: 16px;
+            bottom: 18px;
+            right: 20px;
         }
         .last-update {
             text-align: center;
-            margin-top: 30px;
+            margin-top: 50px;
             color: var(--text-secondary);
-            font-size: 0.95em;
+            font-size: 1em;
         }
-        #intro-text { text-align: center; margin-bottom: 30px; font-size: 1.1em; color: var(--text-secondary); }
     </style>
 </head>
 <body>
-    <nav>
+    <!-- Arka plan animasyonu -->
+    <div id="background-animation"></div>
+
+    <!-- Hamburger Menü -->
+    <div id="menu-toggle" onclick="toggleMenu()">
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
+    <!-- Sol Menü -->
+    <nav id="sidebar">
         <h2>Araçlar</h2>
         <ul>
             <li class="active" onclick="showSection('home')">Ana Sayfa</li>
-            <li onclick="showSection('ping')">Site Ping İzleyici</li>
+            <li onclick="showSection('ping')">Tüm Siteler</li>
             <li onclick="showSection('borsa')">Borsa Takip</li>
             <li onclick="showSection('hava')">Hava Durumu</li>
             <li onclick="showSection('diger')">Diğer Araçlar</li>
         </ul>
     </nav>
+
     <main>
-        <h1 id="title">Hoş Geldin!</h1>
-        <div id="content" class="card">
-            <p id="intro-text">Grok'un güçlü AI teknolojisiyle desteklenen kişisel araç paneline hoş geldin! Sitelerini izle, borsa takip et, hava durumu öğren ve daha fazlası.</p>
-            <input type="text" id="search-input" placeholder="Site veya etiket ara... (örn: search, video)">
+        <h1 id="title">Araçlar Paneli</h1>
+        <div id="content">
+            <div id="search-container">
+                <input type="text" id="search-input" placeholder="Site veya etiket ara... (örn: video, social, search)">
+            </div>
             <div id="ping-grid"></div>
         </div>
-        <div id="last-update" class="last-update"></div>
+        <div id="last-update" class="last-update">Veri yükleniyor...</div>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script>
-        const JSON_URL = "https://raw.githubusercontent.com/rulokat/my-tools-dashboard/main/data/ping-results.json";
+        // Teknolojik Arka Plan Animasyonu
+        particlesJS("background-animation", {
+            particles: {
+                number: { value: 60 },
+                color: { value: "#00ff41" },
+                shape: { type: "circle" },
+                opacity: { value: 0.3, random: true },
+                size: { value: 3, random: true },
+                line_linked: { enable: true, distance: 150, color: "#00ff41", opacity: 0.2, width: 1 },
+                move: { enable: true, speed: 1, direction: "none", random: true }
+            },
+            interactivity: { detect_on: "canvas", events: { resize: true } },
+            retina_detect: true
+        });
 
-        let allData = []; // Tüm siteleri sakla
+        // Menü Aç/Kapa
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        const JSON_URL = "https://raw.githubusercontent.com/rulokat/my-tools-dashboard/main/data/ping-results.json";
+        let allData = [];
 
         function showSection(sec) {
             document.querySelectorAll('nav li').forEach(li => li.classList.remove('active'));
@@ -116,37 +260,25 @@
             const title = document.getElementById('title');
             const content = document.getElementById('content');
             const lastUpdate = document.getElementById('last-update');
-            const searchInput = document.getElementById('search-input');
 
             if (sec === 'home') {
-                title.textContent = 'Hoş Geldin!';
+                title.textContent = 'Araçlar Paneli';
                 content.innerHTML = `
-                    <p id="intro-text">Grok'un güçlü AI teknolojisiyle desteklenen kişisel araç paneline hoş geldin! Sitelerini izle, borsa takip et, hava durumu öğren ve daha fazlası.</p>
-                    <input type="text" id="search-input" placeholder="Site veya etiket ara... (örn: search, video)">
+                    <div id="search-container">
+                        <input type="text" id="search-input" placeholder="Site veya etiket ara... (örn: video, social, search)">
+                    </div>
                     <div id="ping-grid"></div>
                 `;
-                lastUpdate.innerHTML = '<div class="last-update">Veri yükleniyor...</div>';
                 document.getElementById('search-input').addEventListener('input', filterSites);
-                loadPingData(); // Home'da siteleri yükle
-            } else if (sec === 'ping') {
-                title.textContent = 'Site Ping İzleyici';
-                content.innerHTML = `
-                    <p style="text-align:center; color:#aaa;">Yükleniyor...</p>
-                    <div id="ping-grid"></div>
-                `;
-                lastUpdate.innerHTML = '<div class="last-update">Veri yükleniyor...</div>';
                 loadPingData();
-            } else if (sec === 'borsa') {
-                title.textContent = 'Borsa Takip';
-                content.innerHTML = '<p style="text-align:center; color:#aaa;">Yakında eklenecek...</p>';
-                lastUpdate.textContent = '';
-            } else if (sec === 'hava') {
-                title.textContent = 'Hava Durumu';
-                content.innerHTML = '<p style="text-align:center; color:#aaa;">Yakında eklenecek...</p>';
-                lastUpdate.textContent = '';
+            } else if (sec === 'ping') {
+                title.textContent = 'Tüm Siteler';
+                content.innerHTML = `<div id="ping-grid"></div>`;
+                renderSites(allData);
+                lastUpdate.textContent = document.getElementById('last-update').textContent;
             } else {
-                title.textContent = 'Diğer Araçlar';
-                content.innerHTML = '<p style="text-align:center; color:#aaa;">QR kod, şifre üretici vs. yakında...</p>';
+                title.textContent = sec.charAt(0).toUpperCase() + sec.slice(1) + ' Takip';
+                content.innerHTML = '<p style="text-align:center; color:#888; font-size:1.2em;">Yakında eklenecek...</p>';
                 lastUpdate.textContent = '';
             }
         }
@@ -155,9 +287,11 @@
             try {
                 const response = await fetch(JSON_URL + "?t=" + Date.now());
                 const data = await response.json();
-
-                allData = data.data; // Tüm veriyi sakla
-                renderSites(allData); // İlk yüklemede tüm siteleri göster
+                allData = data.data.map(item => ({
+                    ...item,
+                    tags: item.tags || [] // Worker'dan tags geliyorsa
+                }));
+                renderSites(allData);
 
                 const updateTime = new Date(data.lastUpdate);
                 const now = new Date();
@@ -165,7 +299,7 @@
                 document.getElementById('last-update').textContent = 
                     `Son güncelleme: ${diff === 0 ? 'az önce' : diff + ' dakika önce'}`;
             } catch (error) {
-                document.getElementById('content').innerHTML = '<p style="text-align:center; color:#aaa;">Veri yüklenemedi. Worker çalışıyor mu?</p>';
+                document.getElementById('content').innerHTML += '<p style="text-align:center; color:#888;">Veri yüklenemedi.</p>';
             }
         }
 
@@ -194,25 +328,24 @@
         }
 
         function filterSites(event) {
-            const query = event.target.value.toLowerCase();
-            if (query === '') {
-                renderSites(allData); // Boşsa tümünü göster
+            const query = event.target.value.toLowerCase().trim();
+            if (!query) {
+                renderSites(allData);
                 return;
             }
-            const filtered = allData.filter(item => 
+            const filtered = allData.filter(item =>
                 item.site.toLowerCase().includes(query) ||
-                item.tags.some(tag => tag.toLowerCase().includes(query))
+                (item.tags && item.tags.some(tag => tag.toLowerCase().includes(query)))
             );
             renderSites(filtered);
         }
 
-        setInterval(() => {
-            if (document.querySelector('nav li.active')?.textContent.includes('Ana') || document.querySelector('nav li.active')?.textContent.includes('Ping')) {
-                loadPingData();
-            }
-        }, 30000);
+        // Otomatik yenileme
+        setInterval(loadPingData, 30000);
 
-        showSection('home');
+        // İlk yükleme
+        loadPingData();
+        document.getElementById('search-input')?.addEventListener('input', filterSites);
     </script>
 </body>
 </html>
