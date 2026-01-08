@@ -149,7 +149,7 @@
             inset: auto 20px 16px auto;
         }
 
-        /* Ticker Tabela */
+        /* Borsa Bölümü */
         .ticker-wrapper {
             background: #000;
             overflow: hidden;
@@ -230,6 +230,27 @@
             color: var(--secondary);
             font-size: 1.1em;
         }
+
+        .weather-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .weather-card {
+            background: #181818;
+            border-radius: 18px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: 0.4s;
+        }
+        .weather-card:hover { transform: translateY(-8px); }
+        .weather-city { font-size: 1.4em; font-weight: 600; margin-bottom: 12px; }
+        .weather-temp { font-size: 2.5em; font-weight: 700; margin: 16px 0; }
+        .weather-condition { font-size: 1.2em; color: var(--secondary); margin-bottom: 8px; }
+        .weather-icon { font-size: 4em; color: #00ff41; margin: 16px 0; }
     </style>
 </head>
 <body>
@@ -262,7 +283,7 @@
     </main>
 
     <script>
-        // Matrix yağmuru (önceki hali)
+        // Matrix yağmuru
         const c = document.getElementById('matrix');
         const ctx = c.getContext('2d');
         c.width = innerWidth;
@@ -304,8 +325,60 @@
         let selectedStock = 'bist100';
 
         const candleData = {
-            bist100: [ /* önceki veri */ ],
-            // diğer hisseler
+            bist100: [
+                { x: '2026-01-01', o: 10750, h: 10850, l: 10720, c: 10845 },
+                { x: '2026-01-02', o: 10845, h: 10880, l: 10810, c: 10820 },
+                { x: '2026-01-03', o: 10820, h: 10890, l: 10790, c: 10845 },
+                { x: '2026-01-04', o: 10845, h: 10860, l: 10750, c: 10780 },
+                { x: '2026-01-05', o: 10780, h: 10830, l: 10760, c: 10800 },
+                { x: '2026-01-06', o: 10800, h: 10850, l: 10790, c: 10845 },
+                { x: '2026-01-07', o: 10845, h: 10870, l: 10820, c: 10845 }
+            ],
+            THYAO: [
+                { x: '2026-01-01', o: 292, h: 296, l: 291, c: 295 },
+                { x: '2026-01-02', o: 295, h: 297, l: 294, c: 293 },
+                { x: '2026-01-03', o: 293, h: 296, l: 292, c: 295.5 },
+                { x: '2026-01-04', o: 295.5, h: 296, l: 294, c: 295 },
+                { x: '2026-01-05', o: 295, h: 296, l: 294, c: 295 },
+                { x: '2026-01-06', o: 295, h: 296, l: 294, c: 295 },
+                { x: '2026-01-07', o: 295, h: 296, l: 294, c: 295 }
+            ],
+            GARAN: [
+                { x: '2026-01-01', o: 110, h: 112, l: 109, c: 112 },
+                { x: '2026-01-02', o: 112, h: 113, l: 111, c: 112.4 },
+                { x: '2026-01-03', o: 112.4, h: 113, l: 112, c: 112 },
+                { x: '2026-01-04', o: 112, h: 112.5, l: 111.5, c: 112 },
+                { x: '2026-01-05', o: 112, h: 112.5, l: 111.5, c: 112 },
+                { x: '2026-01-06', o: 112, h: 112.5, l: 111.5, c: 112 },
+                { x: '2026-01-07', o: 112, h: 112.5, l: 111.5, c: 112 }
+            ],
+            AKBNK: [
+                { x: '2026-01-01', o: 67, h: 68.5, l: 66.5, c: 68 },
+                { x: '2026-01-02', o: 68, h: 68.5, l: 67.5, c: 68.2 },
+                { x: '2026-01-03', o: 68.2, h: 68.5, l: 68, c: 68 },
+                { x: '2026-01-04', o: 68, h: 68.5, l: 67.8, c: 68 },
+                { x: '2026-01-05', o: 68, h: 68.5, l: 67.8, c: 68 },
+                { x: '2026-01-06', o: 68, h: 68.5, l: 67.8, c: 68 },
+                { x: '2026-01-07', o: 68, h: 68.5, l: 67.8, c: 68 }
+            ],
+            EREGL: [
+                { x: '2026-01-01', o: 47, h: 49, l: 46.5, c: 48.9 },
+                { x: '2026-01-02', o: 48.9, h: 49.5, l: 48.5, c: 49 },
+                { x: '2026-01-03', o: 49, h: 49.5, l: 48.5, c: 49 },
+                { x: '2026-01-04', o: 49, h: 49.5, l: 48.5, c: 49 },
+                { x: '2026-01-05', o: 49, h: 49.5, l: 48.5, c: 49 },
+                { x: '2026-01-06', o: 49, h: 49.5, l: 48.5, c: 49 },
+                { x: '2026-01-07', o: 49, h: 49.5, l: 48.5, c: 49 }
+            ],
+            SISE: [
+                { x: '2026-01-01', o: 47.5, h: 48.5, l: 47, c: 48.15 },
+                { x: '2026-01-02', o: 48.15, h: 48.5, l: 48, c: 48 },
+                { x: '2026-01-03', o: 48, h: 48.5, l: 47.8, c: 48 },
+                { x: '2026-01-04', o: 48, h: 48.5, l: 47.8, c: 48 },
+                { x: '2026-01-05', o: 48, h: 48.5, l: 47.8, c: 48 },
+                { x: '2026-01-06', o: 48, h: 48.5, l: 47.8, c: 48 },
+                { x: '2026-01-07', o: 48, h: 48.5, l: 47.8, c: 48 }
+            ]
         };
 
         document.querySelectorAll('nav li').forEach(li => {
@@ -314,7 +387,6 @@
                 li.classList.add('active');
 
                 const sec = li.dataset.sec;
-                // Sadece Borsa için başlık boş
                 document.getElementById('title').textContent = sec === 'borsa' ? '' : (sec === 'home' ? 'Rulo-Archive' : li.textContent.trim());
 
                 if (sec === 'home') {
@@ -356,7 +428,203 @@
             };
         });
 
-        // Diğer fonksiyonlar (fetchData, showSites, renderBorsaCards, startTicker, renderCandleChart, initSearch) önceki gibi
+        async function fetchData() {
+            try {
+                const res = await fetch(JSON_URL + '?t=' + Date.now());
+                const data = await res.json();
+                lastUpdate = new Date(data.lastUpdate);
+
+                allSites = data.ping.data.map(s => ({
+                    ...s,
+                    cleanName: s.site
+                        .replace(/^www\./, '')
+                        .replace(/\.(com|org|net|io|co|edu|gov|tv|me|app)$/, '')
+                        .split('.')
+                        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+                        .join(' '),
+                    tags: s.tags || []
+                }));
+
+                borsaData = data.borsa;
+
+                const activeSec = document.querySelector('nav li.active')?.dataset.sec;
+                if (activeSec === 'ping') showSites(allSites);
+                if (activeSec === 'borsa') {
+                    renderBorsaCards();
+                    startTicker();
+                }
+                updateTime();
+            } catch (e) {
+                console.error("Veri yüklenemedi:", e);
+            }
+        }
+
+        function updateTime() {
+            if (!lastUpdate) return;
+            const diff = Math.floor((Date.now() - lastUpdate) / 60000);
+            document.getElementById('update').textContent = 
+                `Son güncelleme: ${diff === 0 ? 'az önce' : diff + ' dk önce'}`;
+        }
+
+        function showSites(sites) {
+            const grid = document.getElementById('grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            sites.forEach(s => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.onclick = () => open('https://' + s.site, '_blank');
+
+                card.innerHTML = `
+                    <img src="https://www.google.com/s2/favicons?domain=${s.site}&sz=128" class="favicon">
+                    <div class="info">
+                        <div class="name">${s.cleanName}</div>
+                    </div>
+                    <div class="ping">${s.latency >= 0 ? s.latency + ' ms' : 'Timeout'}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderBorsaCards() {
+            if (!borsaData) return;
+            const grid = document.getElementById('borsa-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            const items = [
+                { name: 'Dolar', value: borsaData.usd },
+                { name: 'Euro', value: borsaData.eur },
+                { name: 'Altın (Gram)', value: borsaData.gold },
+                { name: 'BIST 100', value: borsaData.bist100.value }
+            ];
+
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'borsa-card';
+                card.onclick = () => selectStock(item.name.toLowerCase().replace(' ', ''));
+                card.innerHTML = `
+                    <div class="borsa-name">${item.name}</div>
+                    <div class="borsa-price">${item.value}</div>
+                `;
+                grid.appendChild(card);
+            });
+
+            borsaData.stocks.forEach(stock => {
+                const card = document.createElement('div');
+                card.className = 'borsa-card';
+                card.onclick = () => selectStock(stock.symbol);
+                card.innerHTML = `
+                    <div class="borsa-name">${stock.name} (${stock.symbol})</div>
+                    <div class="borsa-price">${stock.price} ₺</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function selectStock(symbol) {
+            selectedStock = symbol.toLowerCase();
+            document.getElementById('chart-title').textContent = symbol.toUpperCase();
+            renderCandleChart(selectedStock);
+        }
+
+        function renderCandleChart(symbol) {
+            const ctx = document.getElementById('stock-chart')?.getContext('2d');
+            if (!ctx) return;
+            if (currentChart) currentChart.destroy();
+
+            const data = candleData[symbol] || candleData['bist100'];
+
+            currentChart = new Chart(ctx, {
+                type: 'candlestick',
+                data: {
+                    datasets: [{
+                        label: symbol.toUpperCase(),
+                        data: data
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { type: 'time', time: { unit: 'day' }, grid: { color: '#333' }, ticks: { color: '#aaaaaa' } },
+                        y: { grid: { color: '#333' }, ticks: { color: '#aaaaaa' } }
+                    }
+                }
+            });
+        }
+
+        function startTicker() {
+            if (!borsaData) return;
+            const ticker = document.getElementById('ticker');
+            if (!ticker) return;
+            ticker.innerHTML = '';
+
+            const allItems = [
+                { symbol: 'USD/TRY', price: borsaData.usd, change: 0 },
+                { symbol: 'EUR/TRY', price: borsaData.eur, change: 0 },
+                { symbol: 'ALTIN', price: borsaData.gold, change: 0 },
+                { symbol: 'BIST100', price: borsaData.bist100.value, change: borsaData.bist100.change },
+                ...borsaData.stocks
+            ];
+
+            allItems.forEach(item => {
+                const span = document.createElement('span');
+                span.className = 'ticker-item';
+                span.innerHTML = `
+                    <span class="ticker-symbol">${item.symbol || item.name}</span>
+                    <span class="ticker-price">${item.price || item.value}</span>
+                    <span class="ticker-change ${item.change >= 0 ? 'up' : 'down'}">
+                        ${item.change >= 0 ? '+' : ''}${item.change?.toFixed(2) || ''}%
+                    </span>
+                `;
+                ticker.appendChild(span);
+                ticker.appendChild(span.cloneNode(true));
+            });
+        }
+
+        function renderHava() {
+            const grid = document.getElementById('hava-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            const cities = [
+                { city: "Mersin", temp: "18°C", condition: "Güneşli", icon: "fas fa-sun" },
+                { city: "Niğde", temp: "5°C", condition: "Karlı", icon: "fas fa-snowflake" },
+                { city: "Bodrum", temp: "20°C", condition: "Rüzgarlı", icon: "fas fa-wind" }
+            ];
+
+            cities.forEach(city => {
+                const card = document.createElement('div');
+                card.className = 'weather-card';
+                card.innerHTML = `
+                    <div class="weather-city">${city.city}</div>
+                    <i class="${city.icon} weather-icon"></i>
+                    <div class="weather-temp">${city.temp}</div>
+                    <div class="weather-condition">${city.condition}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function initSearch() {
+            const input = document.getElementById('search');
+            if (!input) return;
+
+            input.oninput = () => {
+                const q = input.value.toLowerCase().trim();
+                if (!q) return showSites([]);
+
+                const filtered = allSites.filter(s =>
+                    s.site.toLowerCase().includes(q) ||
+                    s.cleanName.toLowerCase().includes(q) ||
+                    s.tags.some(t => t.toLowerCase().includes(q))
+                );
+
+                showSites(filtered);
+            };
+        }
 
         fetchData();
         setInterval(fetchData, 30000);
