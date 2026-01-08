@@ -5,10 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rulo-Archive</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/luxon"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial"></script>
     <style>
         :root {
             --bg: #0a0a0a;
@@ -19,8 +15,6 @@
             --accent: #1a1a1a;
             --online: #00ff41;
             --offline: #ff4444;
-            --up: #00ff41;
-            --down: #ff4444;
             --shadow: 0 8px 20px rgba(0,0,0,0.6);
         }
         * { box-sizing: border-box; margin:0; padding:0; }
@@ -86,7 +80,7 @@
         }
 
         main { padding: 100px 40px 40px; }
-        h1 { font-size: 2.2em; text-align: center; margin-bottom: 30px; }
+        h1 { font-size: 2.2em; text-align: center; margin-bottom: 50px; }
 
         #search-box {
             max-width: 800px;
@@ -139,6 +133,17 @@
             margin-right: 16px;
             box-shadow: 0 6px 12px rgba(0,0,0,0.4);
         }
+        .status {
+            position: absolute;
+            inset: 12px auto auto 12px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 3px solid #000;
+            background: var(--offline);
+        }
+        .online .status { background: var(--online); }
+        .offline .status { background: var(--offline); }
         .info { flex: 1; }
         .name { font-size: 1.1em; font-weight: 600; }
         .ping {
@@ -147,88 +152,6 @@
             color: var(--secondary);
             position: absolute;
             inset: auto 20px 16px auto;
-        }
-
-        /* Borsa Bölümü */
-        .ticker-wrapper {
-            background: #000;
-            overflow: hidden;
-            padding: 12px 0;
-            margin: 0 0 40px 0;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
-        }
-        .ticker {
-            display: flex;
-            white-space: nowrap;
-            animation: scroll 80s linear infinite;
-        }
-        .ticker-item {
-            margin: 0 50px;
-            font-family: 'Courier New', monospace;
-            font-size: 1.5em;
-            font-weight: bold;
-        }
-        .ticker-symbol { color: var(--text); margin-right: 16px; }
-        .ticker-price { color: var(--text); margin-right: 16px; }
-        .ticker-change.up { color: var(--up); }
-        .ticker-change.down { color: var(--down); }
-
-        @keyframes scroll {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
-
-        .borsa-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 24px;
-            max-width: 1600px;
-            margin: 0 auto 40px;
-        }
-        .borsa-card {
-            background: #181818;
-            border-radius: 18px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            cursor: pointer;
-            transition: 0.4s;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
-            height: 120px;
-            position: relative;
-        }
-        .borsa-card:hover {
-            transform: translateY(-8px) scale(1.03);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.7);
-        }
-        .borsa-name {
-            font-size: 1.1em;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-        .borsa-price {
-            font-size: 1.8em;
-            font-weight: 700;
-            align-self: flex-end;
-        }
-
-        .chart-container {
-            background: #181818;
-            border-radius: 18px;
-            padding: 24px;
-            margin: 40px auto;
-            max-width: 1000px;
-            box-shadow: var(--shadow);
-        }
-        .chart-title { font-size: 1.4em; text-align: center; margin-bottom: 20px; color: var(--text); }
-
-        .update {
-            text-align: center;
-            margin-top: 60px;
-            color: var(--secondary);
-            font-size: 1.1em;
         }
 
         .weather-grid {
@@ -251,6 +174,13 @@
         .weather-temp { font-size: 2.5em; font-weight: 700; margin: 16px 0; }
         .weather-condition { font-size: 1.2em; color: var(--secondary); margin-bottom: 8px; }
         .weather-icon { font-size: 4em; color: #00ff41; margin: 16px 0; }
+
+        .update {
+            text-align: center;
+            margin-top: 60px;
+            color: var(--secondary);
+            font-size: 1.1em;
+        }
     </style>
 </head>
 <body>
@@ -265,7 +195,6 @@
         <ul>
             <li class="active" data-sec="home"><i class="fas fa-home"></i> Ana</li>
             <li data-sec="ping"><i class="fas fa-globe"></i> Tüm Siteler</li>
-            <li data-sec="borsa"><i class="fas fa-chart-line"></i> Borsa</li>
             <li data-sec="hava"><i class="fas fa-cloud-sun"></i> Hava</li>
             <li data-sec="diger"><i class="fas fa-tools"></i> Diğer</li>
         </ul>
@@ -283,7 +212,7 @@
     </main>
 
     <script>
-        // Matrix yağmuru
+        // Matrix yağmuru (Çince + Rusça)
         const c = document.getElementById('matrix');
         const ctx = c.getContext('2d');
         c.width = innerWidth;
@@ -317,69 +246,9 @@
             document.getElementById('sidebar').classList.toggle('open');
         });
 
-        const JSON_URL = "https://raw.githubusercontent.com/rulokat/my-tools-dashboard/main/data/data.json";
+        const JSON_URL = "https://raw.githubusercontent.com/rulokat/my-tools-dashboard/main/data/ping-results.json";
         let allSites = [];
-        let borsaData = null;
         let lastUpdate = null;
-        let currentChart = null;
-        let selectedStock = 'bist100';
-
-        const candleData = {
-            bist100: [
-                { x: '2026-01-01', o: 10750, h: 10850, l: 10720, c: 10845 },
-                { x: '2026-01-02', o: 10845, h: 10880, l: 10810, c: 10820 },
-                { x: '2026-01-03', o: 10820, h: 10890, l: 10790, c: 10845 },
-                { x: '2026-01-04', o: 10845, h: 10860, l: 10750, c: 10780 },
-                { x: '2026-01-05', o: 10780, h: 10830, l: 10760, c: 10800 },
-                { x: '2026-01-06', o: 10800, h: 10850, l: 10790, c: 10845 },
-                { x: '2026-01-07', o: 10845, h: 10870, l: 10820, c: 10845 }
-            ],
-            THYAO: [
-                { x: '2026-01-01', o: 292, h: 296, l: 291, c: 295 },
-                { x: '2026-01-02', o: 295, h: 297, l: 294, c: 293 },
-                { x: '2026-01-03', o: 293, h: 296, l: 292, c: 295.5 },
-                { x: '2026-01-04', o: 295.5, h: 296, l: 294, c: 295 },
-                { x: '2026-01-05', o: 295, h: 296, l: 294, c: 295 },
-                { x: '2026-01-06', o: 295, h: 296, l: 294, c: 295 },
-                { x: '2026-01-07', o: 295, h: 296, l: 294, c: 295 }
-            ],
-            GARAN: [
-                { x: '2026-01-01', o: 110, h: 112, l: 109, c: 112 },
-                { x: '2026-01-02', o: 112, h: 113, l: 111, c: 112.4 },
-                { x: '2026-01-03', o: 112.4, h: 113, l: 112, c: 112 },
-                { x: '2026-01-04', o: 112, h: 112.5, l: 111.5, c: 112 },
-                { x: '2026-01-05', o: 112, h: 112.5, l: 111.5, c: 112 },
-                { x: '2026-01-06', o: 112, h: 112.5, l: 111.5, c: 112 },
-                { x: '2026-01-07', o: 112, h: 112.5, l: 111.5, c: 112 }
-            ],
-            AKBNK: [
-                { x: '2026-01-01', o: 67, h: 68.5, l: 66.5, c: 68 },
-                { x: '2026-01-02', o: 68, h: 68.5, l: 67.5, c: 68.2 },
-                { x: '2026-01-03', o: 68.2, h: 68.5, l: 68, c: 68 },
-                { x: '2026-01-04', o: 68, h: 68.5, l: 67.8, c: 68 },
-                { x: '2026-01-05', o: 68, h: 68.5, l: 67.8, c: 68 },
-                { x: '2026-01-06', o: 68, h: 68.5, l: 67.8, c: 68 },
-                { x: '2026-01-07', o: 68, h: 68.5, l: 67.8, c: 68 }
-            ],
-            EREGL: [
-                { x: '2026-01-01', o: 47, h: 49, l: 46.5, c: 48.9 },
-                { x: '2026-01-02', o: 48.9, h: 49.5, l: 48.5, c: 49 },
-                { x: '2026-01-03', o: 49, h: 49.5, l: 48.5, c: 49 },
-                { x: '2026-01-04', o: 49, h: 49.5, l: 48.5, c: 49 },
-                { x: '2026-01-05', o: 49, h: 49.5, l: 48.5, c: 49 },
-                { x: '2026-01-06', o: 49, h: 49.5, l: 48.5, c: 49 },
-                { x: '2026-01-07', o: 49, h: 49.5, l: 48.5, c: 49 }
-            ],
-            SISE: [
-                { x: '2026-01-01', o: 47.5, h: 48.5, l: 47, c: 48.15 },
-                { x: '2026-01-02', o: 48.15, h: 48.5, l: 48, c: 48 },
-                { x: '2026-01-03', o: 48, h: 48.5, l: 47.8, c: 48 },
-                { x: '2026-01-04', o: 48, h: 48.5, l: 47.8, c: 48 },
-                { x: '2026-01-05', o: 48, h: 48.5, l: 47.8, c: 48 },
-                { x: '2026-01-06', o: 48, h: 48.5, l: 47.8, c: 48 },
-                { x: '2026-01-07', o: 48, h: 48.5, l: 47.8, c: 48 }
-            ]
-        };
 
         document.querySelectorAll('nav li').forEach(li => {
             li.onclick = () => {
@@ -387,7 +256,7 @@
                 li.classList.add('active');
 
                 const sec = li.dataset.sec;
-                document.getElementById('title').textContent = sec === 'borsa' ? '' : (sec === 'home' ? 'Rulo-Archive' : li.textContent.trim());
+                document.getElementById('title').textContent = sec === 'home' ? 'Rulo-Archive' : li.textContent.trim();
 
                 if (sec === 'home') {
                     document.getElementById('content').innerHTML = `
@@ -401,21 +270,6 @@
                 } else if (sec === 'ping') {
                     document.getElementById('content').innerHTML = `<div id="grid"></div>`;
                     showSites(allSites);
-                    updateTime();
-                } else if (sec === 'borsa') {
-                    document.getElementById('content').innerHTML = `
-                        <div class="ticker-wrapper">
-                            <div class="ticker" id="ticker"></div>
-                        </div>
-                        <div class="borsa-grid" id="borsa-grid"></div>
-                        <div class="chart-container">
-                            <div class="chart-title" id="chart-title">BIST 100</div>
-                            <canvas id="stock-chart"></canvas>
-                        </div>
-                    `;
-                    renderBorsaCards();
-                    startTicker();
-                    renderCandleChart('bist100');
                     updateTime();
                 } else if (sec === 'hava') {
                     document.getElementById('content').innerHTML = `<div class="weather-grid" id="hava-grid"></div>`;
@@ -432,9 +286,9 @@
             try {
                 const res = await fetch(JSON_URL + '?t=' + Date.now());
                 const data = await res.json();
-                lastUpdate = new Date(data.lastUpdate);
+                lastUpdate = new Date(data.lastUpdate || new Date());
 
-                allSites = data.ping.data.map(s => ({
+                allSites = data.data.map(s => ({
                     ...s,
                     cleanName: s.site
                         .replace(/^www\./, '')
@@ -445,13 +299,8 @@
                     tags: s.tags || []
                 }));
 
-                borsaData = data.borsa;
-
-                const activeSec = document.querySelector('nav li.active')?.dataset.sec;
-                if (activeSec === 'ping') showSites(allSites);
-                if (activeSec === 'borsa') {
-                    renderBorsaCards();
-                    startTicker();
+                if (document.querySelector('nav li.active')?.dataset.sec === 'ping') {
+                    showSites(allSites);
                 }
                 updateTime();
             } catch (e) {
@@ -473,10 +322,11 @@
 
             sites.forEach(s => {
                 const card = document.createElement('div');
-                card.className = 'card';
+                card.className = `card ${s.online ? 'online' : 'offline'}`;
                 card.onclick = () => open('https://' + s.site, '_blank');
 
                 card.innerHTML = `
+                    <div class="status"></div>
                     <img src="https://www.google.com/s2/favicons?domain=${s.site}&sz=128" class="favicon">
                     <div class="info">
                         <div class="name">${s.cleanName}</div>
@@ -484,103 +334,6 @@
                     <div class="ping">${s.latency >= 0 ? s.latency + ' ms' : 'Timeout'}</div>
                 `;
                 grid.appendChild(card);
-            });
-        }
-
-        function renderBorsaCards() {
-            if (!borsaData) return;
-            const grid = document.getElementById('borsa-grid');
-            if (!grid) return;
-            grid.innerHTML = '';
-
-            const items = [
-                { name: 'Dolar', value: borsaData.usd },
-                { name: 'Euro', value: borsaData.eur },
-                { name: 'Altın (Gram)', value: borsaData.gold },
-                { name: 'BIST 100', value: borsaData.bist100.value }
-            ];
-
-            items.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'borsa-card';
-                card.onclick = () => selectStock(item.name.toLowerCase().replace(' ', ''));
-                card.innerHTML = `
-                    <div class="borsa-name">${item.name}</div>
-                    <div class="borsa-price">${item.value}</div>
-                `;
-                grid.appendChild(card);
-            });
-
-            borsaData.stocks.forEach(stock => {
-                const card = document.createElement('div');
-                card.className = 'borsa-card';
-                card.onclick = () => selectStock(stock.symbol);
-                card.innerHTML = `
-                    <div class="borsa-name">${stock.name} (${stock.symbol})</div>
-                    <div class="borsa-price">${stock.price} ₺</div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function selectStock(symbol) {
-            selectedStock = symbol.toLowerCase();
-            document.getElementById('chart-title').textContent = symbol.toUpperCase();
-            renderCandleChart(selectedStock);
-        }
-
-        function renderCandleChart(symbol) {
-            const ctx = document.getElementById('stock-chart')?.getContext('2d');
-            if (!ctx) return;
-            if (currentChart) currentChart.destroy();
-
-            const data = candleData[symbol] || candleData['bist100'];
-
-            currentChart = new Chart(ctx, {
-                type: 'candlestick',
-                data: {
-                    datasets: [{
-                        label: symbol.toUpperCase(),
-                        data: data
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { type: 'time', time: { unit: 'day' }, grid: { color: '#333' }, ticks: { color: '#aaaaaa' } },
-                        y: { grid: { color: '#333' }, ticks: { color: '#aaaaaa' } }
-                    }
-                }
-            });
-        }
-
-        function startTicker() {
-            if (!borsaData) return;
-            const ticker = document.getElementById('ticker');
-            if (!ticker) return;
-            ticker.innerHTML = '';
-
-            const allItems = [
-                { symbol: 'USD/TRY', price: borsaData.usd, change: 0 },
-                { symbol: 'EUR/TRY', price: borsaData.eur, change: 0 },
-                { symbol: 'ALTIN', price: borsaData.gold, change: 0 },
-                { symbol: 'BIST100', price: borsaData.bist100.value, change: borsaData.bist100.change },
-                ...borsaData.stocks
-            ];
-
-            allItems.forEach(item => {
-                const span = document.createElement('span');
-                span.className = 'ticker-item';
-                span.innerHTML = `
-                    <span class="ticker-symbol">${item.symbol || item.name}</span>
-                    <span class="ticker-price">${item.price || item.value}</span>
-                    <span class="ticker-change ${item.change >= 0 ? 'up' : 'down'}">
-                        ${item.change >= 0 ? '+' : ''}${item.change?.toFixed(2) || ''}%
-                    </span>
-                `;
-                ticker.appendChild(span);
-                ticker.appendChild(span.cloneNode(true));
             });
         }
 
