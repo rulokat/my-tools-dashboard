@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2026-01-23T15:56:08.459Z",
+  "lastUpdate": "2026-01-23T16:01:12.794Z",
   "ping": {
     "totalSites": 10,
     "data": [
@@ -12,10 +12,10 @@
           "google",
           "information"
         ],
-        "latency": 1273,
+        "latency": 988,
         "status": 204,
         "online": true,
-        "timestamp": "2026-01-23T15:55:54.743Z"
+        "timestamp": "2026-01-23T16:01:00.176Z"
       },
       {
         "site": "youtube.com",
@@ -26,10 +26,10 @@
           "google",
           "music"
         ],
-        "latency": 2127,
+        "latency": 1708,
         "status": 200,
         "online": true,
-        "timestamp": "2026-01-23T15:55:56.870Z"
+        "timestamp": "2026-01-23T16:01:01.884Z"
       },
       {
         "site": "github.com",
@@ -40,10 +40,10 @@
           "open-source",
           "programming"
         ],
-        "latency": 2358,
+        "latency": 93,
         "status": 200,
         "online": true,
-        "timestamp": "2026-01-23T15:55:59.228Z"
+        "timestamp": "2026-01-23T16:01:01.977Z"
       },
       {
         "site": "cloudflare.com",
@@ -54,10 +54,10 @@
           "hosting",
           "dns"
         ],
-        "latency": 492,
+        "latency": 577,
         "status": 200,
         "online": true,
-        "timestamp": "2026-01-23T15:55:59.720Z"
+        "timestamp": "2026-01-23T16:01:02.554Z"
       },
       {
         "site": "twitter.com",
@@ -68,10 +68,10 @@
           "microblogging",
           "x"
         ],
-        "latency": 212,
+        "latency": 227,
         "status": 403,
         "online": true,
-        "timestamp": "2026-01-23T15:55:59.932Z"
+        "timestamp": "2026-01-23T16:01:02.781Z"
       },
       {
         "site": "instagram.com",
@@ -82,10 +82,10 @@
           "meta",
           "sharing"
         ],
-        "latency": 3430,
+        "latency": 5188,
         "status": 200,
         "online": true,
-        "timestamp": "2026-01-23T15:56:03.362Z"
+        "timestamp": "2026-01-23T16:01:07.969Z"
       },
       {
         "site": "wikipedia.org",
@@ -96,10 +96,10 @@
           "education",
           "wiki"
         ],
-        "latency": 737,
+        "latency": 839,
         "status": 403,
         "online": true,
-        "timestamp": "2026-01-23T15:56:04.099Z"
+        "timestamp": "2026-01-23T16:01:08.808Z"
       },
       {
         "site": "amazon.com",
@@ -110,10 +110,10 @@
           "cloud",
           "aws"
         ],
-        "latency": 1908,
+        "latency": 1853,
         "status": 405,
         "online": true,
-        "timestamp": "2026-01-23T15:56:06.007Z"
+        "timestamp": "2026-01-23T16:01:10.661Z"
       },
       {
         "site": "reddit.com",
@@ -124,10 +124,10 @@
           "discussion",
           "social"
         ],
-        "latency": 22,
+        "latency": 260,
         "status": 403,
         "online": true,
-        "timestamp": "2026-01-23T15:56:06.029Z"
+        "timestamp": "2026-01-23T16:01:10.921Z"
       },
       {
         "site": "netflix.com",
@@ -138,15 +138,15 @@
           "entertainment",
           "video"
         ],
-        "latency": 2430,
+        "latency": 1873,
         "status": 405,
         "online": true,
-        "timestamp": "2026-01-23T15:56:08.459Z"
+        "timestamp": "2026-01-23T16:01:12.794Z"
       }
     ]
   },
   "borsa": {
-    "lastUpdate": "2026-01-23T15:56:08.459Z",
+    "lastUpdate": "2026-01-23T16:01:12.794Z",
     "usd": "34.25 ₺",
     "eur": "37.18 ₺",
     "gold": "2.450,00 ₺",
